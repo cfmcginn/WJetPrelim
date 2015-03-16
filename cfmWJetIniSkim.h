@@ -1,11 +1,11 @@
 //=============================================                                 
 // Author: Chris McGinn                                                         
 //                                                                              
-// DiJet Initial Skim Class (MC)                                                    
+// WJet Initial Skim Class (MC)                                                    
 //                                                                              
 //=============================================  
-#ifndef cfmDiJetIniSkim_h
-#define cfmDiJetIniSkim_h
+#ifndef cfmWJetIniSkim_h
+#define cfmWJetIniSkim_h
 
 #include "TTree.h"
 #include "TFile.h"
@@ -301,9 +301,9 @@ void GetIniBranches(sampleType sType = kHIDATA)
 }
 
 
-void InitDiJetIniSkim(sampleType sType = kHIDATA)
+void InitWJetIniSkim(sampleType sType = kHIDATA)
 {
-  std::cout << "Init DiJet IniSkim" << std::endl;
+  std::cout << "Init WJet IniSkim" << std::endl;
 
   trackTreeIni_p = new TTree("trackTreeIni", "trackTreeIni");
   pfCandTreeIni_p = new TTree("pfCandTreeIni", "pfCandTreeIni");
@@ -314,7 +314,7 @@ void InitDiJetIniSkim(sampleType sType = kHIDATA)
 }
 
 
-void CleanupDiJetIniSkim()
+void CleanupWJetIniSkim()
 {
   if(trackTreeIni_p != 0) delete trackTreeIni_p;
   if(pfCandTreeIni_p != 0) delete pfCandTreeIni_p;
@@ -323,9 +323,9 @@ void CleanupDiJetIniSkim()
 }
 
 
-void GetDiJetIniSkim(TFile* iniFile_p, sampleType sType = kHIDATA)
+void GetWJetIniSkim(TFile* iniFile_p, sampleType sType = kHIDATA)
 {
-  std::cout << "Get DiJet IniSkim" << std::endl;
+  std::cout << "Get WJet IniSkim" << std::endl;
 
   trackTreeIni_p = (TTree*)iniFile_p->Get("trackTreeIni");
   pfCandTreeIni_p = (TTree*)iniFile_p->Get("pfCandTreeIni");

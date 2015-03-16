@@ -1,0 +1,9 @@
+-rw-r--r-- 1 cfmcginn cfmcginn 573M Mar 16 09:10 /mnt/hadoop/cms/store/user/cfmcginn/HIData/WJet/PbPbForest_MatchEqR_Calo_HIHighPt_HIRun2011-14Mar2014-v4_WJet_20150316_0_0.root
+-rw-r--r-- 1 cfmcginn cfmcginn 574M Mar 16 09:23 /mnt/hadoop/cms/store/user/cfmcginn/HIData/WJet/PbPbForest_MatchEqR_Calo_HIHighPt_HIRun2011-14Mar2014-v4_WJet_20150316_0_1.root
+-rw-r--r-- 1 cfmcginn cfmcginn 572M Mar 16 09:34 /mnt/hadoop/cms/store/user/cfmcginn/HIData/WJet/PbPbForest_MatchEqR_Calo_HIHighPt_HIRun2011-14Mar2014-v4_WJet_20150316_0_2.root
+-rw-r--r-- 1 cfmcginn cfmcginn 573M Mar 16 09:47 /mnt/hadoop/cms/store/user/cfmcginn/HIData/WJet/PbPbForest_MatchEqR_Calo_HIHighPt_HIRun2011-14Mar2014-v4_WJet_20150316_0_3.root
+-rw-r--r-- 1 cfmcginn cfmcginn 573M Mar 16 09:58 /mnt/hadoop/cms/store/user/cfmcginn/HIData/WJet/PbPbForest_MatchEqR_Calo_HIHighPt_HIRun2011-14Mar2014-v4_WJet_20150316_0_4.root
+-rw-r--r-- 1 cfmcginn cfmcginn 572M Mar 16 10:12 /mnt/hadoop/cms/store/user/cfmcginn/HIData/WJet/PbPbForest_MatchEqR_Calo_HIHighPt_HIRun2011-14Mar2014-v4_WJet_20150316_0_5.root
+-rw-r--r-- 1 cfmcginn cfmcginn 571M Mar 16 10:23 /mnt/hadoop/cms/store/user/cfmcginn/HIData/WJet/PbPbForest_MatchEqR_Calo_HIHighPt_HIRun2011-14Mar2014-v4_WJet_20150316_0_6.root
+-rw-r--r-- 1 cfmcginn cfmcginn 575M Mar 16 10:35 /mnt/hadoop/cms/store/user/cfmcginn/HIData/WJet/PbPbForest_MatchEqR_Calo_HIHighPt_HIRun2011-14Mar2014-v4_WJet_20150316_0_7.root
+-rw-r--r-- 1 cfmcginn cfmcginn  26M Mar 16 10:35 /mnt/hadoop/cms/store/user/cfmcginn/HIData/WJet/PbPbForest_MatchEqR_Calo_HIHighPt_HIRun2011-14Mar2014-v4_WJet_20150316_0_8.root
