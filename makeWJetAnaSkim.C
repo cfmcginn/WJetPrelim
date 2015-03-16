@@ -114,6 +114,9 @@ int makeWJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t nu
       pfEvtPtSum_[0] += pfPt_[iter]*cos(pfPhi_[iter]);
       pfEvtPtSum_[1] += pfPt_[iter]*sin(pfPhi_[iter]);
 
+      pfEvtVsPtSum_[0] += pfVsPt_[iter]*cos(pfPhi_[iter]);
+      pfEvtVsPtSum_[1] += pfVsPt_[iter]*sin(pfPhi_[iter]);
+
       if(TMath::Abs(pfId_[iter]) == 3 && pfPt_[iter] > muonPt_ && pfPt_[iter] > leptPtCut && TMath::Abs(pfEta_[iter]) < leptEtaCut){
 	muonPt_ = pfPt_[iter];
 	muonVsPt_ = pfVsPt_[iter];
@@ -121,10 +124,18 @@ int makeWJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t nu
 	muonEta_ = pfEta_[iter];
       }
     }
-    
-    pfEvtPtMag_ = TMath::Sqrt(pfEvtPtSum_[0]*pfEvtPtSum_[0] + pfEvtPtSum_[1]*pfEvtPtSum_[1]);
-    pfEvtPhi_ = TMat::ATan2(pfEvtPtSum[1], pfEvtPtSum[0]);
 
+    if(muonPt_ > 0){    
+      pfEvtPtMag_ = TMath::Sqrt(pfEvtPtSum_[0]*pfEvtPtSum_[0] + pfEvtPtSum_[1]*pfEvtPtSum_[1]);
+      pfEvtPhi_ = TMath::ATan2(pfEvtPtSum_[1], pfEvtPtSum_[0]);
+      pfNeuPhi_ = TMath::ATan2(-pfEvtPtSum_[1], -pfEvtPtSum_[0]);
+      pfMt_ = TMath::Sqrt(2*muonPt_*pfEvtPtMag_*(1 - cos(getDPHI(muonPhi_, pfEvtPhi_))));
+
+      pfEvtVsPtMag_ = TMath::Sqrt(pfEvtVsPtSum_[0]*pfEvtVsPtSum_[0] + pfEvtVsPtSum_[1]*pfEvtVsPtSum_[1]);
+      pfEvtVsPhi_ = TMath::ATan2(pfEvtVsPtSum_[1], pfEvtVsPtSum_[0]);
+      pfVsNeuPhi_ = TMath::ATan2(-pfEvtVsPtSum_[1], -pfEvtVsPtSum_[0]);
+      pfVsMt_ = TMath::Sqrt(2*muonPt_*pfEvtVsPtMag_*(1 - cos(getDPHI(muonPhi_, pfEvtVsPhi_))));
+    }
 
     trackTreeAna_p->Fill();
     pfCandTreeAna_p->Fill();

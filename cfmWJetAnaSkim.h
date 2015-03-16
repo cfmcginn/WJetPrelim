@@ -22,6 +22,7 @@ Float_t trkEvtPtSum_[2];
 Float_t trkEvtPtMag_;
 Float_t trkEvtPhi_;
 
+Float_t trkNeuPhi_;
 Float_t trkMt_;
 
 //PF Tree Variables
@@ -35,14 +36,15 @@ Float_t pfEvtPtSum_[2];
 Float_t pfEvtPtMag_;
 Float_t pfEvtPhi_;
 
+Float_t pfNeuPhi_;
 Float_t pfMt_;
 
 Float_t pfEvtVsPtSum_[2];
 Float_t pfEvtVsPtMag_;
 Float_t pfEvtVsPhi_;
 
+Float_t pfVsNeuPhi_;
 Float_t pfVsMt_;
-
 
 //Jet Tree Variables
 
@@ -62,6 +64,7 @@ Float_t genEvtPtSum_[2];
 Float_t genEvtPtMag_;
 Float_t genEvtPhi_;
 
+Float_t genNeuPhi_;
 Float_t genMt_;
 
 void SetAnaBranches(sampleType sType = kHIDATA)
@@ -77,6 +80,7 @@ void SetAnaBranches(sampleType sType = kHIDATA)
   trackTreeAna_p->Branch("trkEvtPtMag", &trkEvtPtMag_, "trkEvtPtMag/F");
   trackTreeAna_p->Branch("trkEvtPhi", &trkEvtPhi_, "trkEvtPhi/F");
 
+  trackTreeAna_p->Branch("trkNeuPhi", &trkNeuPhi_, "trkNeuPhi/F");
   trackTreeAna_p->Branch("trkMt", &trkMt_, "trkMt/F");
 
   //PF Tree Branches
@@ -90,12 +94,14 @@ void SetAnaBranches(sampleType sType = kHIDATA)
   pfCandTreeAna_p->Branch("pfEvtPtMag", &pfEvtPtMag_, "pfEvtPtMag/F");
   pfCandTreeAna_p->Branch("pfEvtPhi", &pfEvtPhi_, "pfEvtPhi/F");
 
+  pfCandTreeAna_p->Branch("pfNeuPhi", &pfNeuPhi_, "pfNeuPhi/F");
   pfCandTreeAna_p->Branch("pfMt", &pfMt_, "pfMt/F");
 
   pfCandTreeAna_p->Branch("pfEvtVsPtSum", pfEvtVsPtSum_, "pfEvtVsPtSum[2]/F");
   pfCandTreeAna_p->Branch("pfEvtVsPtMag", &pfEvtVsPtMag_, "pfEvtVsPtMag/F");
   pfCandTreeAna_p->Branch("pfEvtVsPhi", &pfEvtVsPhi_, "pfEvtVsPhi/F");
 
+  pfCandTreeAna_p->Branch("pfVsNeuPhi", &pfVsNeuPhi_, "pfVsNeuPhi/F");
   pfCandTreeAna_p->Branch("pfVsMt", &pfVsMt_, "pfVsMt/F");
 
   //Jet Tree Branches
@@ -119,6 +125,7 @@ void SetAnaBranches(sampleType sType = kHIDATA)
     genTreeAna_p->Branch("genEvtPtMag", &genEvtPtMag_, "genEvtPtMag/F");
     genTreeAna_p->Branch("genEvtPhi", &genEvtPhi_, "genEvtPhi/F");
 
+    genTreeAna_p->Branch("genNeuPhi", &genNeuPhi_, "genNeuPhi/F");
     genTreeAna_p->Branch("genMt", &genMt_, "genMt/F");
   }
 
@@ -135,10 +142,11 @@ void GetAnaBranches(sampleType sType = kHIDATA)
   
   //Track Tree Branches
   
-  trackTreeAna_p->SetBranchAddress("trkEvtPtSum", trkEvtPtSum);
+  trackTreeAna_p->SetBranchAddress("trkEvtPtSum", trkEvtPtSum_);
   trackTreeAna_p->SetBranchAddress("trkEvtPtMag", &trkEvtPtMag_);
   trackTreeAna_p->SetBranchAddress("trkEvtPhi", &trkEvtPhi_);
 
+  trackTreeAna_p->SetBranchAddress("trkNeuPhi", &trkNeuPhi_);
   trackTreeAna_p->SetBranchAddress("trkMt", &trkMt_);
 
   //PF Tree Branches
@@ -148,16 +156,18 @@ void GetAnaBranches(sampleType sType = kHIDATA)
   pfCandTreeAna_p->SetBranchAddress("muonPhi", &muonPhi_);
   pfCandTreeAna_p->SetBranchAddress("muonEta", &muonEta_);
 
-  pfCandTreeAna_p->SetBranchAddress("pfEvtPtSum", pfEvtPtSum);
+  pfCandTreeAna_p->SetBranchAddress("pfEvtPtSum", pfEvtPtSum_);
   pfCandTreeAna_p->SetBranchAddress("pfEvtPtMag", &pfEvtPtMag_);
   pfCandTreeAna_p->SetBranchAddress("pfEvtPhi", &pfEvtPhi_);  
 
+  pfCandTreeAna_p->SetBranchAddress("pfNeuPhi", &pfNeuPhi_);  
   pfCandTreeAna_p->SetBranchAddress("pfMt", &pfMt_);  
 
-  pfCandTreeAna_p->SetBranchAddress("pfEvtVsPtSum", pfEvtVsPtSum);
+  pfCandTreeAna_p->SetBranchAddress("pfEvtVsPtSum", pfEvtVsPtSum_);
   pfCandTreeAna_p->SetBranchAddress("pfEvtVsPtMag", &pfEvtVsPtMag_);
   pfCandTreeAna_p->SetBranchAddress("pfEvtVsPhi", &pfEvtVsPhi_);  
 
+  pfCandTreeAna_p->SetBranchAddress("pfVsNeuPhi", &pfVsNeuPhi_);  
   pfCandTreeAna_p->SetBranchAddress("pfVsMt", &pfVsMt_);  
 
   //Jet Tree Branches
@@ -177,10 +187,11 @@ void GetAnaBranches(sampleType sType = kHIDATA)
   //Gen Tree Variables
     
   if(montecarlo){
-    genTreeAna_p->SetBranchAddress("genEvtPtSum", genEvtPtSum);
+    genTreeAna_p->SetBranchAddress("genEvtPtSum", genEvtPtSum_);
     genTreeAna_p->SetBranchAddress("genEvtPtMag", &genEvtPtMag_);
     genTreeAna_p->SetBranchAddress("genEvtPhi", &genEvtPhi_);
 
+    genTreeAna_p->SetBranchAddress("genNeuPhi", &genNeuPhi_);
     genTreeAna_p->SetBranchAddress("genMt", &genMt_);
   }
 
@@ -237,6 +248,7 @@ void InitAnaVar()
   trkEvtPtMag_ = -999;
   trkEvtPhi_ = -999;
 
+  trkNeuPhi_ = -999;
   trkMt_ = -999;
 
   //PF Tree Variables
@@ -251,6 +263,7 @@ void InitAnaVar()
   pfEvtPtMag_ = -999;
   pfEvtPhi_ = -999;
 
+  pfNeuPhi_ = -999;
   pfMt_ = -999;
 
   pfEvtVsPtSum_[0] = -999;
@@ -258,6 +271,7 @@ void InitAnaVar()
   pfEvtVsPtMag_ = -999;
   pfEvtVsPhi_ = -999;
 
+  pfVsNeuPhi_ = -999;
   pfVsMt_ = -999;
 
   //Gen Tree Variables
@@ -267,6 +281,7 @@ void InitAnaVar()
   genEvtPtMag_ = -999;
   genEvtPhi_ = -999;
 
+  genNeuPhi_ = -999;
   genMt_ = -999;
 
   return;

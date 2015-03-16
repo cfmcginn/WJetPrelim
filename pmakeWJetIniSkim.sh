@@ -5,7 +5,7 @@ then
   exit 1
 fi
 
-now="skimWTreeJob_$(date +"%m_%d_%Y__%H_%M_%S")"
+now="WJetIniSkimTreeJob_$(date +"%m_%d_%Y__%H_%M_%S")"
 mkdir $now
 mkdir -p $4
 len=`wc -l $1 | awk '{print $1}'`
