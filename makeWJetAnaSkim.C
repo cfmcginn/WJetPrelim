@@ -12,6 +12,10 @@
 #include "stdlib.h"
 #include <fstream>
 #include "TComplex.h"
+#include "etaPhiFunc.h"
+
+const Float_t leptPtCut = 15.0;
+const Float_t leptEtaCut = 2.4;
 
 int makeWJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t num = 0)
 {
@@ -84,11 +88,14 @@ int makeWJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t nu
   std::cout << nentries << std::endl;
 
   for(Long64_t jentry = 0; jentry < nentries; jentry++){
-    jetTreeIni_p->GetEntry(jentry);
     trackTreeIni_p->GetEntry(jentry);
+    pfCandTreeIni_p->GetEntry(jentry);
+    jetTreeIni_p->GetEntry(jentry);
     if(montecarlo) genTreeIni_p->GetEntry(jentry);
 
     if(jentry%1000 == 0) std::cout << jentry << std::endl;
+
+    InitAnaVar();
 
     run_ = runIni_;
     evt_ = evtIni_;
@@ -102,14 +109,33 @@ int makeWJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t nu
       psin_ = psinIni_;
     }
 
-    jetTreeAna_p->Fill();
+
+    for(Int_t iter = 0; iter < nPF_; iter++){
+      pfEvtPtSum_[0] += pfPt_[iter]*cos(pfPhi_[iter]);
+      pfEvtPtSum_[1] += pfPt_[iter]*sin(pfPhi_[iter]);
+
+      if(TMath::Abs(pfId_[iter]) == 3 && pfPt_[iter] > muonPt_ && pfPt_[iter] > leptPtCut && TMath::Abs(pfEta_[iter]) < leptEtaCut){
+	muonPt_ = pfPt_[iter];
+	muonVsPt_ = pfVsPt_[iter];
+	muonPhi_ = pfPhi_[iter];
+	muonEta_ = pfEta_[iter];
+      }
+    }
+    
+    pfEvtPtMag_ = TMath::Sqrt(pfEvtPtSum_[0]*pfEvtPtSum_[0] + pfEvtPtSum_[1]*pfEvtPtSum_[1]);
+    pfEvtPhi_ = TMat::ATan2(pfEvtPtSum[1], pfEvtPtSum[0]);
+
+
     trackTreeAna_p->Fill();
+    pfCandTreeAna_p->Fill();
+    jetTreeAna_p->Fill();
     if(montecarlo) genTreeAna_p->Fill();
   }
   
-  outFile->cd();
-  jetTreeAna_p->Write("", TObject::kOverwrite);
+  outFile->cd(); 
   trackTreeAna_p->Write("", TObject::kOverwrite);
+  pfCandTreeAna_p->Write("", TObject::kOverwrite);
+  jetTreeAna_p->Write("", TObject::kOverwrite);
   if(montecarlo) genTreeAna_p->Write("", TObject::kOverwrite);
 
   CleanupWJetAnaSkim();

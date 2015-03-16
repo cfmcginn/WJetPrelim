@@ -210,6 +210,8 @@ void SetIniBranches(sampleType sType = kHIDATA)
     genTreeIni_p->Branch("genId", genId_, "genId[nGen]/I");
     genTreeIni_p->Branch("genMotherId", genMotherId_, "genMotherId[nGen]/I");
   }    
+
+  return;
 }
 
 
@@ -311,6 +313,8 @@ void InitWJetIniSkim(sampleType sType = kHIDATA)
   if(isMonteCarlo(sType)) genTreeIni_p = new TTree("genTreeIni", "genTreeIni");
 
   SetIniBranches(sType);
+
+  return;
 }
 
 
@@ -320,6 +324,8 @@ void CleanupWJetIniSkim()
   if(pfCandTreeIni_p != 0) delete pfCandTreeIni_p;
   if(jetTreeIni_p != 0) delete jetTreeIni_p;
   if(genTreeIni_p != 0) delete genTreeIni_p;
+
+  return;
 }
 
 
@@ -333,6 +339,8 @@ void GetWJetIniSkim(TFile* iniFile_p, sampleType sType = kHIDATA)
   if(isMonteCarlo(sType)) genTreeIni_p = (TTree*)iniFile_p->Get("genTreeIni");
 
   GetIniBranches(sType);
+
+  return;
 }
 
 #endif
