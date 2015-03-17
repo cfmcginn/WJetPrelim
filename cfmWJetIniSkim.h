@@ -15,6 +15,13 @@
 #include "TMath.h"
 #include "sType.h"
 
+enum AlgoType_PbPb{
+  Vs3Calo,     //0
+  Vs4Calo,     //1
+  T3,          //2
+  T4           //3
+};
+
 Bool_t isMonteCarlo(sampleType sType = kHIDATA){
   if(sType == kHIMC || sType == kPPMC || sType == kPAMC) return true;
   else return false;

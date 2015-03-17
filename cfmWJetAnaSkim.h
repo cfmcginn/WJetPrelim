@@ -26,6 +26,9 @@ Float_t trkNeuPhi_;
 Float_t trkMt_;
 Float_t trkCheck1Mt_;
 Float_t trkCheck2Mt_;
+Float_t trkWPtSum_[2];
+Float_t trkWPtMag_;
+Float_t trkWPhi_;
 
 //PF Tree Variables
 
@@ -62,6 +65,9 @@ Float_t pfNeuPhi_;
 Float_t pfMt_;
 Float_t pfCheck1Mt_;
 Float_t pfCheck2Mt_;
+Float_t pfWPtSum_[2];
+Float_t pfWPtMag_;
+Float_t pfWPhi_;
 
 Float_t pfEvtVsPtSum_[2];
 Float_t pfEvtVsPtMag_;
@@ -71,6 +77,9 @@ Float_t pfVsNeuPhi_;
 Float_t pfVsMt_;
 Float_t pfVsCheck1Mt_;
 Float_t pfVsCheck2Mt_;
+Float_t pfVsWPtSum_[2];
+Float_t pfVsWPtMag_;
+Float_t pfVsWPhi_;
 
 //Jet Tree Variables
 
@@ -84,6 +93,16 @@ Float_t pthat_;
 Float_t hiEvtPlane_;
 Float_t psin_;
 
+const Int_t nJtAlg = 4;
+const Int_t nJtMax = 4;
+
+Float_t AlgJtPt_[nJtAlg][nJtMax];
+Float_t AlgJtPhi_[nJtAlg][nJtMax];
+Float_t AlgJtEta_[nJtAlg][nJtMax];
+Float_t AlgRefPt_[nJtAlg][nJtMax];
+Float_t AlgRefPhi_[nJtAlg][nJtMax];
+Float_t AlgRefEta_[nJtAlg][nJtMax];
+
 //Gen. Tree Variables
 
 Float_t genEvtPtSum_[2];
@@ -94,6 +113,9 @@ Float_t genNeuPhi_;
 Float_t genMt_;
 Float_t genCheck1Mt_;
 Float_t genCheck2Mt_;
+Float_t genWPtSum_[2];
+Float_t genWPtMag_;
+Float_t genWPhi_;
 
 void SetAnaBranches(sampleType sType = kHIDATA)
 {
@@ -112,7 +134,9 @@ void SetAnaBranches(sampleType sType = kHIDATA)
   trackTreeAna_p->Branch("trkMt", &trkMt_, "trkMt/F");
   trackTreeAna_p->Branch("trkCheck1Mt", &trkCheck1Mt_, "trkCheck1Mt/F");
   trackTreeAna_p->Branch("trkCheck2Mt", &trkCheck2Mt_, "trkCheck2Mt/F");
-
+  trackTreeAna_p->Branch("trkWPtSum", &trkWPtSum_, "trkWPtSum[2]/F");
+  trackTreeAna_p->Branch("trkWPtMag", &trkWPtMag_, "trkWPtMag/F");
+  trackTreeAna_p->Branch("trkWPhi", &trkWPhi_, "trkWPhi/F");
 
   //PF Tree Branches
 
@@ -149,6 +173,9 @@ void SetAnaBranches(sampleType sType = kHIDATA)
   pfCandTreeAna_p->Branch("pfMt", &pfMt_, "pfMt/F");
   pfCandTreeAna_p->Branch("pfCheck1Mt", &pfCheck1Mt_, "pfCheck1Mt/F");
   pfCandTreeAna_p->Branch("pfCheck2Mt", &pfCheck2Mt_, "pfCheck2Mt/F");
+  pfCandTreeAna_p->Branch("pfWPtSum", &pfWPtSum_, "pfWPtSum[2]/F");
+  pfCandTreeAna_p->Branch("pfWPtMag", &pfWPtMag_, "pfWPtMag/F");
+  pfCandTreeAna_p->Branch("pfWPhi", &pfWPhi_, "pfWPhi/F");
 
   pfCandTreeAna_p->Branch("pfEvtVsPtSum", pfEvtVsPtSum_, "pfEvtVsPtSum[2]/F");
   pfCandTreeAna_p->Branch("pfEvtVsPtMag", &pfEvtVsPtMag_, "pfEvtVsPtMag/F");
@@ -158,6 +185,10 @@ void SetAnaBranches(sampleType sType = kHIDATA)
   pfCandTreeAna_p->Branch("pfVsMt", &pfVsMt_, "pfVsMt/F");
   pfCandTreeAna_p->Branch("pfVsCheck1Mt", &pfVsCheck1Mt_, "pfVsCheck1Mt/F");
   pfCandTreeAna_p->Branch("pfVsCheck2Mt", &pfVsCheck2Mt_, "pfVsCheck2Mt/F");
+  pfCandTreeAna_p->Branch("pfVsWPtSum", &pfVsWPtSum_, "pfVsWPtSum[2]/F");
+  pfCandTreeAna_p->Branch("pfVsWPtMag", &pfVsWPtMag_, "pfVsWPtMag/F");
+  pfCandTreeAna_p->Branch("pfVsWPhi", &pfVsWPhi_, "pfVsWPhi/F");
+
 
   //Jet Tree Branches
 
@@ -173,6 +204,13 @@ void SetAnaBranches(sampleType sType = kHIDATA)
     jetTreeAna_p->Branch("psin", &psin_, "psin/F");
   }
 
+  jetTreeAna_p->Branch("AlgJtPt", AlgJtPt_, Form("AlgJtPt[%d][%d]/F", nJtAlg, nJtMax));
+  jetTreeAna_p->Branch("AlgJtPhi", AlgJtPhi_, Form("AlgJtPhi[%d][%d]/F", nJtAlg, nJtMax));
+  jetTreeAna_p->Branch("AlgJtEta", AlgJtEta_, Form("AlgJtEta[%d][%d]/F", nJtAlg, nJtMax));
+  jetTreeAna_p->Branch("AlgRefPt", AlgRefPt_, Form("AlgRefPt[%d][%d]/F", nJtAlg, nJtMax));
+  jetTreeAna_p->Branch("AlgRefPhi", AlgRefPhi_, Form("AlgRefPhi[%d][%d]/F", nJtAlg, nJtMax));
+  jetTreeAna_p->Branch("AlgRefEta", AlgRefEta_, Form("AlgRefEta[%d][%d]/F", nJtAlg, nJtMax));
+
   //Gen. Tree Branches
 
   if(montecarlo){
@@ -184,6 +222,9 @@ void SetAnaBranches(sampleType sType = kHIDATA)
     genTreeAna_p->Branch("genMt", &genMt_, "genMt/F");
     genTreeAna_p->Branch("genCheck1Mt", &genCheck1Mt_, "genCheck1Mt/F");
     genTreeAna_p->Branch("genCheck2Mt", &genCheck2Mt_, "genCheck2Mt/F");
+    genTreeAna_p->Branch("genWPtSum", &genWPtSum_, "genWPtSum[2]/F");
+    genTreeAna_p->Branch("genWPtMag", &genWPtMag_, "genWPtMag/F");
+    genTreeAna_p->Branch("genWPhi", &genWPhi_, "genWPhi/F");
   }
 
   return;
@@ -207,6 +248,9 @@ void GetAnaBranches(sampleType sType = kHIDATA)
   trackTreeAna_p->SetBranchAddress("trkMt", &trkMt_);
   trackTreeAna_p->SetBranchAddress("trkCheck1Mt", &trkCheck1Mt_);
   trackTreeAna_p->SetBranchAddress("trkCheck2Mt", &trkCheck2Mt_);
+  trackTreeAna_p->SetBranchAddress("trkWPtSum", trkWPtSum_);
+  trackTreeAna_p->SetBranchAddress("trkWPtMag", &trkWPtMag_);
+  trackTreeAna_p->SetBranchAddress("trkWPhi", &trkWPhi_);
 
   //PF Tree Branches
 
@@ -243,6 +287,9 @@ void GetAnaBranches(sampleType sType = kHIDATA)
   pfCandTreeAna_p->SetBranchAddress("pfMt", &pfMt_);  
   pfCandTreeAna_p->SetBranchAddress("pfCheck1Mt", &pfCheck1Mt_);  
   pfCandTreeAna_p->SetBranchAddress("pfCheck2Mt", &pfCheck2Mt_);  
+  pfCandTreeAna_p->SetBranchAddress("pfWPtSum", pfWPtSum_);  
+  pfCandTreeAna_p->SetBranchAddress("pfWPtMag", &pfWPtMag_);  
+  pfCandTreeAna_p->SetBranchAddress("pfWPhi", &pfWPhi_);  
 
   pfCandTreeAna_p->SetBranchAddress("pfEvtVsPtSum", pfEvtVsPtSum_);
   pfCandTreeAna_p->SetBranchAddress("pfEvtVsPtMag", &pfEvtVsPtMag_);
@@ -252,6 +299,9 @@ void GetAnaBranches(sampleType sType = kHIDATA)
   pfCandTreeAna_p->SetBranchAddress("pfVsMt", &pfVsMt_);  
   pfCandTreeAna_p->SetBranchAddress("pfVsCheck1Mt", &pfVsCheck1Mt_);  
   pfCandTreeAna_p->SetBranchAddress("pfVsCheck2Mt", &pfVsCheck2Mt_);  
+  pfCandTreeAna_p->SetBranchAddress("pfVsWPtSum", pfVsWPtSum_);  
+  pfCandTreeAna_p->SetBranchAddress("pfVsWPtMag", &pfVsWPtMag_);  
+  pfCandTreeAna_p->SetBranchAddress("pfVsWPhi", &pfVsWPhi_);  
 
   //Jet Tree Branches
   
@@ -267,6 +317,13 @@ void GetAnaBranches(sampleType sType = kHIDATA)
     jetTreeAna_p->SetBranchAddress("psin", &psin_);
   }
 
+  jetTreeAna_p->SetBranchAddress("AlgJtPt", AlgJtPt_);
+  jetTreeAna_p->SetBranchAddress("AlgJtPhi", AlgJtPhi_);
+  jetTreeAna_p->SetBranchAddress("AlgJtEta", AlgJtEta_);
+  jetTreeAna_p->SetBranchAddress("AlgRefPt", AlgRefPt_);
+  jetTreeAna_p->SetBranchAddress("AlgRefPhi", AlgRefPhi_);
+  jetTreeAna_p->SetBranchAddress("AlgRefEta", AlgRefEta_);
+
   //Gen Tree Variables
     
   if(montecarlo){
@@ -278,6 +335,9 @@ void GetAnaBranches(sampleType sType = kHIDATA)
     genTreeAna_p->SetBranchAddress("genMt", &genMt_);
     genTreeAna_p->SetBranchAddress("genCheck1Mt", &genCheck1Mt_);
     genTreeAna_p->SetBranchAddress("genCheck2Mt", &genCheck2Mt_);
+    genTreeAna_p->SetBranchAddress("genWPtSum", genWPtSum_);
+    genTreeAna_p->SetBranchAddress("genWPtMag", &genWPtMag_);
+    genTreeAna_p->SetBranchAddress("genWPhi", &genWPhi_);
   }
 
   return;
@@ -337,6 +397,10 @@ void InitAnaVar()
   trkMt_ = -999;
   trkCheck1Mt_ = -999;
   trkCheck2Mt_ = -999;
+  trkWPtSum_[0] = -999;
+  trkWPtSum_[1] = -999;
+  trkWPtMag_ = -999;
+  trkWPhi_ = -999;
 
   //PF Tree Variables
 
@@ -374,6 +438,10 @@ void InitAnaVar()
   pfMt_ = -999;
   pfCheck1Mt_ = -999;
   pfCheck2Mt_ = -999;
+  pfWPtSum_[0] = -999;
+  pfWPtSum_[1] = -999;
+  pfWPtMag_ = -999;
+  pfWPhi_ = -999;
 
   pfEvtVsPtSum_[0] = 0;
   pfEvtVsPtSum_[1] = 0;
@@ -384,6 +452,24 @@ void InitAnaVar()
   pfVsMt_ = -999;
   pfVsCheck1Mt_ = -999;
   pfVsCheck2Mt_ = -999;
+  pfVsWPtSum_[0] = -999;
+  pfVsWPtSum_[1] = -999;
+  pfVsWPtMag_ = -999;
+  pfVsWPhi_ = -999;
+
+  //Jet Tree Variables
+
+  for(Int_t iter = 0; iter < nJtAlg; iter++){
+    for(Int_t iter2 = 0; iter2 < nJtMax; iter2++){
+      AlgJtPt[iter][iter2] = -999;
+      AlgJtPhi[iter][iter2] = -999;
+      AlgJtEta[iter][iter2] = -999;
+
+      AlgRefPt[iter][iter2] = -999;
+      AlgRefPhi[iter][iter2] = -999;
+      AlgRefEta[iter][iter2] = -999;
+    }
+  }
 
   //Gen Tree Variables
 
@@ -396,9 +482,32 @@ void InitAnaVar()
   genMt_ = -999;
   genCheck1Mt_ = -999;
   genCheck2Mt_ = -999;
+  genWPtSum_[0] = -999;
+  genWPtSum_[1] = -999;
+  genWPtMag_ = -999;
+  genWPhi_ = -999;
 
   return;
 }
 
+void getJtVar(Int_t nJt, Float_t jtPt[], Float_t jtPhi[], Float_t jtEta[], Float_t refPt[], Float_t refPhi[], Float_t refEta[], Int_t algNum, Bool_t montecarlo = false, Bool_t truth = false)
+{
+  Int_t nJtCut = nJt;
+  if(nJtCut > nJtMax) nJtCut = nJtMax;
+
+  for(Int_t iter = 0; iter < nJtCut; iter++){
+    AlgJtPt_[algNum][iter] = jtPt[iter];
+    AlgJtPhi_[algNum][iter] = jtPhi[iter];
+    AlgJtEta_[algNum][iter] = jtEta[iter];
+
+    if(montecarlo && !truth){
+      AlgRefPt_[algNum][iter] = refPt[iter];
+      AlgRefPhi_[algNum][iter] = refPhi[iter];
+      AlgRefEta_[algNum][iter] = refEta[iter];
+    }
+  }
+
+  return;
+}
 
 #endif
