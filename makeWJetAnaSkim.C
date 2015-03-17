@@ -192,8 +192,8 @@ int makeWJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t nu
       pfEvtVsPhi_ = TMath::ATan2(pfEvtVsPtSum_[1], pfEvtVsPtSum_[0]);
       pfVsNeuPhi_ = TMath::ATan2(-pfEvtVsPtSum_[1], -pfEvtVsPtSum_[0]);
       pfVsMt_ = TMath::Sqrt(2*leptPt_*pfEvtVsPtMag_*(1 - cos(getDPHI(leptPhi_, pfVsNeuPhi_))));
-      pfVsWPtSum_[0] = leptPt_*cos(leptPhi_) - pfVsEvtPtSum_[0];
-      pfVsWPtSum_[1] = leptPt_*sin(leptPhi_) - pfVsEvtPtSum_[1];
+      pfVsWPtSum_[0] = leptPt_*cos(leptPhi_) - pfEvtVsPtSum_[0];
+      pfVsWPtSum_[1] = leptPt_*sin(leptPhi_) - pfEvtVsPtSum_[1];
       pfVsWPtMag_ = TMath::Sqrt(pfVsWPtSum_[0]*pfVsWPtSum_[0] + pfVsWPtSum_[1]*pfVsWPtSum_[1]);
       pfVsWPhi_ = TMath::ATan2(pfVsWPtSum_[1], pfVsWPtSum_[0]);
 
@@ -217,7 +217,7 @@ int makeWJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t nu
       trkCheck2Mt_ = TMath::Sqrt(2*check2Pt_*trkEvtPtMag_*(1 - cos(getDPHI(check2Phi_, trkNeuPhi_))));
     }
 
-    Float_t dummyArr[];
+    Float_t dummyArr[2];
 
     getJtVar(nVs3Calo_, Vs3CaloPt_, Vs3CaloPhi_, Vs3CaloEta_, Vs3CaloRefPt_, Vs3CaloRefPhi_, Vs3CaloRefEta_, 0, montecarlo, false);
     getJtVar(nVs4Calo_, Vs4CaloPt_, Vs4CaloPhi_, Vs4CaloEta_, Vs4CaloRefPt_, Vs4CaloRefPhi_, Vs4CaloRefEta_, 1, montecarlo, false);

@@ -461,13 +461,13 @@ void InitAnaVar()
 
   for(Int_t iter = 0; iter < nJtAlg; iter++){
     for(Int_t iter2 = 0; iter2 < nJtMax; iter2++){
-      AlgJtPt[iter][iter2] = -999;
-      AlgJtPhi[iter][iter2] = -999;
-      AlgJtEta[iter][iter2] = -999;
+      AlgJtPt_[iter][iter2] = -999;
+      AlgJtPhi_[iter][iter2] = -999;
+      AlgJtEta_[iter][iter2] = -999;
 
-      AlgRefPt[iter][iter2] = -999;
-      AlgRefPhi[iter][iter2] = -999;
-      AlgRefEta[iter][iter2] = -999;
+      AlgRefPt_[iter][iter2] = -999;
+      AlgRefPhi_[iter][iter2] = -999;
+      AlgRefEta_[iter][iter2] = -999;
     }
   }
 
