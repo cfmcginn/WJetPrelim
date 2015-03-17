@@ -15,7 +15,7 @@
 #include "etaPhiFunc.h"
 
 const Float_t leptPtCut = 15.0;
-const Float_t leptEtaCut = 2.4;
+const Float_t leptEtaCut = 2.1;
 
 int makeWJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t num = 0)
 {
@@ -87,6 +87,11 @@ int makeWJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t nu
 
   std::cout << nentries << std::endl;
 
+  Float_t prevLeptPt = 0;
+  Float_t prevLeptVsPt = 0;
+  Float_t prevLeptPhi = 0;
+  Float_t prevLeptEta = 0;
+
   for(Long64_t jentry = 0; jentry < nentries; jentry++){
     trackTreeIni_p->GetEntry(jentry);
     pfCandTreeIni_p->GetEntry(jentry);
@@ -117,25 +122,85 @@ int makeWJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t nu
       pfEvtVsPtSum_[0] += pfVsPt_[iter]*cos(pfPhi_[iter]);
       pfEvtVsPtSum_[1] += pfVsPt_[iter]*sin(pfPhi_[iter]);
 
-      if(TMath::Abs(pfId_[iter]) == 3 && pfPt_[iter] > muonPt_ && pfPt_[iter] > leptPtCut && TMath::Abs(pfEta_[iter]) < leptEtaCut){
-	muonPt_ = pfPt_[iter];
-	muonVsPt_ = pfVsPt_[iter];
-	muonPhi_ = pfPhi_[iter];
-	muonEta_ = pfEta_[iter];
+      if(pfPt_[iter] > leptPtCut && TMath::Abs(pfEta_[iter]) < leptEtaCut){
+	if(TMath::Abs(pfId_[iter]) == 3 && pfPt_[iter] > muonPt_){
+	  muonPt_ = pfPt_[iter];
+	  muonVsPt_ = pfVsPt_[iter];
+	  muonPhi_ = pfPhi_[iter];
+	  muonEta_ = pfEta_[iter];
+	}
+
+	if(TMath::Abs(pfId_[iter]) == 2 && pfPt_[iter] > electronPt_){
+	  electronPt_ = pfPt_[iter];
+	  electronVsPt_ = pfVsPt_[iter];
+	  electronPhi_ = pfPhi_[iter];
+	  electronEta_ = pfEta_[iter];
+	}
+
+	if(TMath::Abs(pfId_[iter]) != 2 && TMath::Abs(pfId_[iter]) != 3 && pfPt_[iter] > check1Pt_){
+	  check1Pt_ = pfPt_[iter];
+	  check1VsPt_ = pfVsPt_[iter];
+	  check1Phi_ = pfPhi_[iter];
+	  check1Eta_ = pfEta_[iter];
+	}
       }
     }
 
-    if(muonPt_ > 0){    
+    if(electronPt_ > muonPt_){
+      leptPt_ = electronPt_;
+      leptVsPt_ = electronVsPt_;
+      leptPhi_ = electronPhi_;
+      leptEta_ = electronEta_;
+    }
+    else if(muonPt_ > electronPt_){
+      leptPt_ = muonPt_;
+      leptVsPt_ = muonVsPt_;
+      leptPhi_ = muonPhi_;
+      leptEta_ = muonEta_;
+    }
+
+    check2Pt_ = prevLeptPt;
+    check2VsPt_ = prevLeptVsPt;
+    check2Phi_ = prevLeptPhi;
+    check2Eta_ = prevLeptEta;
+
+    prevLeptPt = leptPt_;
+    prevLeptVsPt = leptVsPt_;
+    prevLeptPhi = leptPhi_;
+    prevLeptEta = leptEta_;
+
+    for(Int_t iter = 0; iter < nTrk_; iter++){
+      trkEvtPtSum_[0] += trkPt_[iter]*cos(trkPhi_[iter]);
+      trkEvtPtSum_[1] += trkPt_[iter]*sin(trkPhi_[iter]);
+    }
+
+    if(leptPt_ > 0){    
       pfEvtPtMag_ = TMath::Sqrt(pfEvtPtSum_[0]*pfEvtPtSum_[0] + pfEvtPtSum_[1]*pfEvtPtSum_[1]);
       pfEvtPhi_ = TMath::ATan2(pfEvtPtSum_[1], pfEvtPtSum_[0]);
       pfNeuPhi_ = TMath::ATan2(-pfEvtPtSum_[1], -pfEvtPtSum_[0]);
-      pfMt_ = TMath::Sqrt(2*muonPt_*pfEvtPtMag_*(1 - cos(getDPHI(muonPhi_, pfEvtPhi_))));
+      pfMt_ = TMath::Sqrt(2*leptPt_*pfEvtPtMag_*(1 - cos(getDPHI(leptPhi_, pfNeuPhi_))));
 
       pfEvtVsPtMag_ = TMath::Sqrt(pfEvtVsPtSum_[0]*pfEvtVsPtSum_[0] + pfEvtVsPtSum_[1]*pfEvtVsPtSum_[1]);
       pfEvtVsPhi_ = TMath::ATan2(pfEvtVsPtSum_[1], pfEvtVsPtSum_[0]);
       pfVsNeuPhi_ = TMath::ATan2(-pfEvtVsPtSum_[1], -pfEvtVsPtSum_[0]);
-      pfVsMt_ = TMath::Sqrt(2*muonPt_*pfEvtVsPtMag_*(1 - cos(getDPHI(muonPhi_, pfEvtVsPhi_))));
+      pfVsMt_ = TMath::Sqrt(2*leptPt_*pfEvtVsPtMag_*(1 - cos(getDPHI(leptPhi_, pfVsNeuPhi_))));
+
+      trkEvtPtMag_ = TMath::Sqrt(trkEvtPtSum_[0]*trkEvtPtSum_[0] + trkEvtPtSum_[1]*trkEvtPtSum_[1]);
+      trkEvtPhi_ = TMath::ATan2(trkEvtPtSum_[1], trkEvtPtSum_[0]);
+      trkNeuPhi_ = TMath::ATan2(-trkEvtPtSum_[1], -trkEvtPtSum_[0]);
+      trkMt_ = TMath::Sqrt(2*leptPt_*trkEvtPtMag_*(1 - cos(getDPHI(leptPhi_, trkNeuPhi_))));
     }
+    if(check1Pt_ > 0){
+      pfCheck1Mt_ = TMath::Sqrt(2*check1Pt_*pfEvtPtMag_*(1 - cos(getDPHI(check1Phi_, pfNeuPhi_))));
+      pfVsCheck1Mt_ = TMath::Sqrt(2*check1Pt_*pfEvtVsPtMag_*(1 - cos(getDPHI(check1Phi_, pfVsNeuPhi_))));
+      trkCheck1Mt_ = TMath::Sqrt(2*check1Pt_*trkEvtPtMag_*(1 - cos(getDPHI(check1Phi_, trkNeuPhi_))));
+    }
+    if(check2Pt_ > 0){
+      pfCheck2Mt_ = TMath::Sqrt(2*check2Pt_*pfEvtPtMag_*(1 - cos(getDPHI(check2Phi_, pfNeuPhi_))));
+      pfVsCheck2Mt_ = TMath::Sqrt(2*check2Pt_*pfEvtVsPtMag_*(1 - cos(getDPHI(check2Phi_, pfVsNeuPhi_))));
+      trkCheck2Mt_ = TMath::Sqrt(2*check2Pt_*trkEvtPtMag_*(1 - cos(getDPHI(check2Phi_, trkNeuPhi_))));
+    }
+
 
     trackTreeAna_p->Fill();
     pfCandTreeAna_p->Fill();
