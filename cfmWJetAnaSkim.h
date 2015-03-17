@@ -30,6 +30,18 @@ Float_t trkWPtSum_[2];
 Float_t trkWPtMag_;
 Float_t trkWPhi_;
 
+Float_t trkCutEvtPtSum_[2];
+Float_t trkCutEvtPtMag_;
+Float_t trkCutEvtPhi_;
+
+Float_t trkCutNeuPhi_;
+Float_t trkCutMt_;
+Float_t trkCutCheck1Mt_;
+Float_t trkCutCheck2Mt_;
+Float_t trkCutWPtSum_[2];
+Float_t trkCutWPtMag_;
+Float_t trkCutWPhi_;
+
 //PF Tree Variables
 
 Float_t muonPt_;
@@ -137,6 +149,18 @@ void SetAnaBranches(sampleType sType = kHIDATA)
   trackTreeAna_p->Branch("trkWPtSum", &trkWPtSum_, "trkWPtSum[2]/F");
   trackTreeAna_p->Branch("trkWPtMag", &trkWPtMag_, "trkWPtMag/F");
   trackTreeAna_p->Branch("trkWPhi", &trkWPhi_, "trkWPhi/F");
+
+  trackTreeAna_p->Branch("trkCutEvtPtSum", trkCutEvtPtSum_, "trkCutEvtPtSum[2]/F");
+  trackTreeAna_p->Branch("trkCutEvtPtMag", &trkCutEvtPtMag_, "trkCutEvtPtMag/F");
+  trackTreeAna_p->Branch("trkCutEvtPhi", &trkCutEvtPhi_, "trkCutEvtPhi/F");
+
+  trackTreeAna_p->Branch("trkCutNeuPhi", &trkCutNeuPhi_, "trkCutNeuPhi/F");
+  trackTreeAna_p->Branch("trkCutMt", &trkCutMt_, "trkCutMt/F");
+  trackTreeAna_p->Branch("trkCutCheck1Mt", &trkCutCheck1Mt_, "trkCutCheck1Mt/F");
+  trackTreeAna_p->Branch("trkCutCheck2Mt", &trkCutCheck2Mt_, "trkCutCheck2Mt/F");
+  trackTreeAna_p->Branch("trkCutWPtSum", &trkCutWPtSum_, "trkCutWPtSum[2]/F");
+  trackTreeAna_p->Branch("trkCutWPtMag", &trkCutWPtMag_, "trkCutWPtMag/F");
+  trackTreeAna_p->Branch("trkCutWPhi", &trkCutWPhi_, "trkCutWPhi/F");
 
   //PF Tree Branches
 
@@ -251,6 +275,18 @@ void GetAnaBranches(sampleType sType = kHIDATA)
   trackTreeAna_p->SetBranchAddress("trkWPtSum", trkWPtSum_);
   trackTreeAna_p->SetBranchAddress("trkWPtMag", &trkWPtMag_);
   trackTreeAna_p->SetBranchAddress("trkWPhi", &trkWPhi_);
+
+  trackTreeAna_p->SetBranchAddress("trkCutEvtPtSum", trkCutEvtPtSum_);
+  trackTreeAna_p->SetBranchAddress("trkCutEvtPtMag", &trkCutEvtPtMag_);
+  trackTreeAna_p->SetBranchAddress("trkCutEvtPhi", &trkCutEvtPhi_);
+
+  trackTreeAna_p->SetBranchAddress("trkCutNeuPhi", &trkCutNeuPhi_);
+  trackTreeAna_p->SetBranchAddress("trkCutMt", &trkCutMt_);
+  trackTreeAna_p->SetBranchAddress("trkCutCheck1Mt", &trkCutCheck1Mt_);
+  trackTreeAna_p->SetBranchAddress("trkCutCheck2Mt", &trkCutCheck2Mt_);
+  trackTreeAna_p->SetBranchAddress("trkCutWPtSum", trkCutWPtSum_);
+  trackTreeAna_p->SetBranchAddress("trkCutWPtMag", &trkCutWPtMag_);
+  trackTreeAna_p->SetBranchAddress("trkCutWPhi", &trkCutWPhi_);
 
   //PF Tree Branches
 
@@ -401,6 +437,20 @@ void InitAnaVar()
   trkWPtSum_[1] = -999;
   trkWPtMag_ = -999;
   trkWPhi_ = -999;
+
+  trkCutEvtPtSum_[0] = 0;
+  trkCutEvtPtSum_[1] = 0;
+  trkCutEvtPtMag_ = -999;
+  trkCutEvtPhi_ = -999;
+
+  trkCutNeuPhi_ = -999;
+  trkCutMt_ = -999;
+  trkCutCheck1Mt_ = -999;
+  trkCutCheck2Mt_ = -999;
+  trkCutWPtSum_[0] = -999;
+  trkCutWPtSum_[1] = -999;
+  trkCutWPtMag_ = -999;
+  trkCutWPhi_ = -999;
 
   //PF Tree Variables
 

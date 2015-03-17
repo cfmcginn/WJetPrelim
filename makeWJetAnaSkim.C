@@ -16,6 +16,7 @@
 
 const Float_t leptPtCut = 15.0;
 const Float_t leptEtaCut = 2.1;
+const Float_t trkPtCut = 3.0;
 
 int makeWJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t num = 0)
 {
@@ -130,7 +131,7 @@ int makeWJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t nu
 	  muonEta_ = pfEta_[iter];
 	}
 
-	if(TMath::Abs(pfId_[iter]) == 2 && pfPt_[iter] > electronPt_){
+	if(TMath::Abs(pfId_[iter]) == 2 && pfPt_[iter] > electronPt_ && (TMath::Abs(pfEta_[iter]) < 0.80 || TMath::Abs(pfEta_[iter]) > 1.4)){
 	  electronPt_ = pfPt_[iter];
 	  electronVsPt_ = pfVsPt_[iter];
 	  electronPhi_ = pfPhi_[iter];
@@ -176,6 +177,11 @@ int makeWJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t nu
     for(Int_t iter = 0; iter < nTrk_; iter++){
       trkEvtPtSum_[0] += trkPt_[iter]*cos(trkPhi_[iter]);
       trkEvtPtSum_[1] += trkPt_[iter]*sin(trkPhi_[iter]);
+
+      if(trkPt_[iter] > trkPtCut){
+	trkCutEvtPtSum_[0] += trkPt_[iter]*cos(trkPhi_[iter]);
+	trkCutEvtPtSum_[1] += trkPt_[iter]*sin(trkPhi_[iter]);
+      }
     }
 
     if(leptPt_ > 0){    
@@ -205,16 +211,27 @@ int makeWJetAnaSkim(std::string fList = "", sampleType sType = kHIDATA, Int_t nu
       trkWPtSum_[1] = leptPt_*sin(leptPhi_) - trkEvtPtSum_[1];
       trkWPtMag_ = TMath::Sqrt(trkWPtSum_[0]*trkWPtSum_[0] + trkWPtSum_[1]*trkWPtSum_[1]);
       trkWPhi_ = TMath::ATan2(trkWPtSum_[1], trkWPtSum_[0]);
+
+      trkCutEvtPtMag_ = TMath::Sqrt(trkCutEvtPtSum_[0]*trkCutEvtPtSum_[0] + trkCutEvtPtSum_[1]*trkCutEvtPtSum_[1]);
+      trkCutEvtPhi_ = TMath::ATan2(trkCutEvtPtSum_[1], trkCutEvtPtSum_[0]);
+      trkCutNeuPhi_ = TMath::ATan2(-trkCutEvtPtSum_[1], -trkCutEvtPtSum_[0]);
+      trkCutMt_ = TMath::Sqrt(2*leptPt_*trkCutEvtPtMag_*(1 - cos(getDPHI(leptPhi_, trkCutNeuPhi_))));
+      trkCutWPtSum_[0] = leptPt_*cos(leptPhi_) - trkCutEvtPtSum_[0];
+      trkCutWPtSum_[1] = leptPt_*sin(leptPhi_) - trkCutEvtPtSum_[1];
+      trkCutWPtMag_ = TMath::Sqrt(trkCutWPtSum_[0]*trkCutWPtSum_[0] + trkCutWPtSum_[1]*trkCutWPtSum_[1]);
+      trkCutWPhi_ = TMath::ATan2(trkCutWPtSum_[1], trkCutWPtSum_[0]);
     }
     if(check1Pt_ > 0){
       pfCheck1Mt_ = TMath::Sqrt(2*check1Pt_*pfEvtPtMag_*(1 - cos(getDPHI(check1Phi_, pfNeuPhi_))));
       pfVsCheck1Mt_ = TMath::Sqrt(2*check1Pt_*pfEvtVsPtMag_*(1 - cos(getDPHI(check1Phi_, pfVsNeuPhi_))));
       trkCheck1Mt_ = TMath::Sqrt(2*check1Pt_*trkEvtPtMag_*(1 - cos(getDPHI(check1Phi_, trkNeuPhi_))));
+      trkCutCheck1Mt_ = TMath::Sqrt(2*check1Pt_*trkCutEvtPtMag_*(1 - cos(getDPHI(check1Phi_, trkCutNeuPhi_))));
     }
     if(check2Pt_ > 0){
       pfCheck2Mt_ = TMath::Sqrt(2*check2Pt_*pfEvtPtMag_*(1 - cos(getDPHI(check2Phi_, pfNeuPhi_))));
       pfVsCheck2Mt_ = TMath::Sqrt(2*check2Pt_*pfEvtVsPtMag_*(1 - cos(getDPHI(check2Phi_, pfVsNeuPhi_))));
       trkCheck2Mt_ = TMath::Sqrt(2*check2Pt_*trkEvtPtMag_*(1 - cos(getDPHI(check2Phi_, trkNeuPhi_))));
+      trkCutCheck2Mt_ = TMath::Sqrt(2*check2Pt_*trkCutEvtPtMag_*(1 - cos(getDPHI(check2Phi_, trkCutNeuPhi_))));
     }
 
     Float_t dummyArr[2];

@@ -1,7 +1,7 @@
 //=============================================
 // Author McGinn
 // 
-// DiJet Initial Skim Class (MC)
+// WJet Initial Skim Class (MC)
 //
 // !!NOTE: Written for jets sorted by pt, tracks unsorted!!
 //
@@ -53,7 +53,7 @@ void setJtBranches(TTree* inJtTree, Bool_t montecarlo = false, Bool_t isGen = fa
 }
 
 
-int makeDiJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *outName = "defaultName_DIJETINISKIM.root", Int_t num = 0)
+int makeWJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *outName = "defaultName_DIJETINISKIM.root", Int_t num = 0)
 {
   //Define MC or Data
   Bool_t montecarlo = isMonteCarlo(sType);
@@ -193,7 +193,7 @@ int makeDiJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *
   std::cout << nentries << std::endl;
 
   TFile *outFile = new TFile(Form("%s_%d_%d.root", outName, num, 0), "RECREATE");
-  InitDiJetIniSkim(sType);
+  InitWJetIniSkim(sType);
 
   Int_t totEv = 0;
   Int_t selectCut = 0;
@@ -389,7 +389,7 @@ int makeDiJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *
     for(Int_t pfIter = 0; pfIter < pf.nPFpart; pfIter++){
       if(TMath::Abs(pf.pfEta[pfIter]) > 2.4) continue;
 
-      if(pf.pfPt[pfIter] < 0.5) continue;
+      //      if(pf.pfPt[pfIter] < 0.5) continue;
 
       pfPt_[nPF_] = pf.pfPt[pfIter];
       pfVsPt_[nPF_] = pf.pfVsPt[pfIter];
@@ -449,11 +449,11 @@ int makeDiJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *
 
       if(montecarlo) genTreeIni_p->Write("", TObject::kOverwrite);
 
-      CleanupDiJetIniSkim();
+      CleanupWJetIniSkim();
       outFile->Close();
       delete outFile;
       outFile = new TFile(Form("%s_%d_%d.root", outName, num, nEvtsOutTag), "RECREATE");
-      InitDiJetIniSkim(sType);
+      InitWJetIniSkim(sType);
     }
   }
 
@@ -472,7 +472,7 @@ int makeDiJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *
   pfCandTreeIni_p->Write("", TObject::kOverwrite);    
   if(montecarlo) genTreeIni_p->Write("", TObject::kOverwrite);
 
-  CleanupDiJetIniSkim();
+  CleanupWJetIniSkim();
   outFile->Close();
   delete outFile;
 
@@ -505,7 +505,7 @@ int main(int argc, char *argv[])
 {
   if(argc != 5)
     {
-      std::cout << "Usage: makeDiJetIniSkim <inputFile> <sType> <outputFile> <#>"  << std::endl;
+      std::cout << "Usage: makeWJetIniSkim <inputFile> <sType> <outputFile> <#>"  << std::endl;
       std::cout << argc << std::endl;
       std::cout << argv[0] << ", "  << argv[1] << ", " << argv[2] << ", " << argv[3]<< ", " << argv[4] << std::endl;
       return 1;
@@ -513,7 +513,7 @@ int main(int argc, char *argv[])
 
   int rStatus = -1;
 
-  rStatus = makeDiJetIniSkim(argv[1], sampleType(atoi(argv[2])), argv[3], atoi(argv[4]));
+  rStatus = makeWJetIniSkim(argv[1], sampleType(atoi(argv[2])), argv[3], atoi(argv[4]));
 
   return rStatus;
 }
