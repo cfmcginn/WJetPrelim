@@ -53,7 +53,7 @@ void setJtBranches(TTree* inJtTree, Bool_t montecarlo = false, Bool_t isGen = fa
 }
 
 
-int makeWJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *outName = "defaultName_DIJETINISKIM.root", Int_t num = 0)
+int makeWJetIniSkim(string fList = "", sampleType sType = kHIDATA, Bool_t isMinBias = false, const char *outName = "defaultName_DIJETINISKIM.root", Int_t num = 0)
 {
   //Define MC or Data
   Bool_t montecarlo = isMonteCarlo(sType);
@@ -121,7 +121,7 @@ int makeWJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *o
   c->pfTree->SetBranchStatus("*", 0);
   c->pfTree->SetBranchStatus("nPFpart", 1);
   c->pfTree->SetBranchStatus("pfPt", 1);
-  c->pfTree->SetBranchStatus("pfVsPt", 1);
+  if(hi) c->pfTree->SetBranchStatus("pfVsPt", 1);
   c->pfTree->SetBranchStatus("pfPhi", 1);
   c->pfTree->SetBranchStatus("pfEta", 1);
   c->pfTree->SetBranchStatus("pfId", 1);
@@ -143,13 +143,15 @@ int makeWJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *o
     c->evtTree->SetBranchStatus("hiBin", 1);
 
     setJtBranches(c->akVs3CaloJetTree, montecarlo, true);
-    setJtBranches(c->akVs4CaloJetTree, montecarlo, true);
+    if(!isMinBias) setJtBranches(c->akVs4CaloJetTree, montecarlo, true);
+    if(!isMinBias) setJtBranches(c->akVs5CaloJetTree, montecarlo, true);
   }
   else{
     c->skimTree->SetBranchStatus("pPAcollisionEventSelectionPA", 1);
 
     setJtBranches(c->ak3CaloJetTree, montecarlo, true);
-    setJtBranches(c->ak4CaloJetTree, montecarlo, true);
+    if(!isMinBias) setJtBranches(c->ak4CaloJetTree, montecarlo, true);
+    if(!isMinBias) setJtBranches(c->ak5CaloJetTree, montecarlo, true);
   }
 
   c->LoadNoTrees();
@@ -159,11 +161,13 @@ int makeWJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *o
 
   if(hi){
     c->hasAkVs3CaloJetTree = true;
-    c->hasAkVs4CaloJetTree = true;
+    if(!isMinBias) c->hasAkVs4CaloJetTree = true;
+    if(!isMinBias) c->hasAkVs5CaloJetTree = true;
   }
   else{
     c->hasAk3CaloJetTree = true;
-    c->hasAk4CaloJetTree = true;
+    if(!isMinBias) c->hasAk4CaloJetTree = true;
+    if(!isMinBias) c->hasAk5CaloJetTree = true;
   }
 
   c->hasTrackTree = true;
@@ -266,19 +270,23 @@ int makeWJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *o
 
     nVs3Calo_ = 0;
     nVs4Calo_ = 0;
+    nVs5Calo_ = 0;
 
     nT3_ = 0;
     nT4_ = 0;
+    nT5_ = 0;
 
-    Jets AlgJtCollection[2];
+    Jets AlgJtCollection[3];
     
     if(hi){
       AlgJtCollection[0] = c->akVs3Calo;
-      AlgJtCollection[1] = c->akVs4Calo;
+      if(!isMinBias) AlgJtCollection[1] = c->akVs4Calo;
+      if(!isMinBias) AlgJtCollection[2] = c->akVs5Calo;
     }
     else{
       AlgJtCollection[0] = c->ak3Calo;
-      AlgJtCollection[1] = c->ak4Calo;
+      if(!isMinBias) AlgJtCollection[1] = c->ak4Calo;
+      if(!isMinBias) AlgJtCollection[2] = c->ak5Calo;
     }
 
 
@@ -303,25 +311,48 @@ int makeWJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *o
       nVs3Calo_++;
     }
 
-    for(Int_t Vs4CaloIter = 0; Vs4CaloIter < AlgJtCollection[1].nref; Vs4CaloIter++){
-      if(AlgJtCollection[1].jtpt[Vs4CaloIter] < jtThreshPtCut) break;
-      else if(TMath::Abs(AlgJtCollection[1].jteta[Vs4CaloIter]) > jtEtaCut) continue;
-
-      Vs4CaloPt_[nVs4Calo_] = AlgJtCollection[1].jtpt[Vs4CaloIter];
-      Vs4CaloPhi_[nVs4Calo_] = AlgJtCollection[1].jtphi[Vs4CaloIter];
-      Vs4CaloEta_[nVs4Calo_] = AlgJtCollection[1].jteta[Vs4CaloIter];
-
-      Vs4CaloTrkMax_[nVs4Calo_] = AlgJtCollection[1].trackMax[Vs4CaloIter];
-      Vs4CaloRawPt_[nVs4Calo_] = AlgJtCollection[1].rawpt[Vs4CaloIter];
-
-      if(montecarlo){
-	Vs4CaloRefPt_[nVs4Calo_] = AlgJtCollection[1].refpt[Vs4CaloIter];
-	Vs4CaloRefPhi_[nVs4Calo_] = AlgJtCollection[1].refphi[Vs4CaloIter];
-	Vs4CaloRefEta_[nVs4Calo_] = AlgJtCollection[1].refeta[Vs4CaloIter];
-	Vs4CaloRefPart_[nVs4Calo_] = AlgJtCollection[1].refparton_flavor[Vs4CaloIter];
+    if(!isMinBias){
+      for(Int_t Vs4CaloIter = 0; Vs4CaloIter < AlgJtCollection[1].nref; Vs4CaloIter++){
+	if(AlgJtCollection[1].jtpt[Vs4CaloIter] < jtThreshPtCut) break;
+	else if(TMath::Abs(AlgJtCollection[1].jteta[Vs4CaloIter]) > jtEtaCut) continue;
+	
+	Vs4CaloPt_[nVs4Calo_] = AlgJtCollection[1].jtpt[Vs4CaloIter];
+	Vs4CaloPhi_[nVs4Calo_] = AlgJtCollection[1].jtphi[Vs4CaloIter];
+	Vs4CaloEta_[nVs4Calo_] = AlgJtCollection[1].jteta[Vs4CaloIter];
+	
+	Vs4CaloTrkMax_[nVs4Calo_] = AlgJtCollection[1].trackMax[Vs4CaloIter];
+	Vs4CaloRawPt_[nVs4Calo_] = AlgJtCollection[1].rawpt[Vs4CaloIter];
+	
+	if(montecarlo){
+	  Vs4CaloRefPt_[nVs4Calo_] = AlgJtCollection[1].refpt[Vs4CaloIter];
+	  Vs4CaloRefPhi_[nVs4Calo_] = AlgJtCollection[1].refphi[Vs4CaloIter];
+	  Vs4CaloRefEta_[nVs4Calo_] = AlgJtCollection[1].refeta[Vs4CaloIter];
+	  Vs4CaloRefPart_[nVs4Calo_] = AlgJtCollection[1].refparton_flavor[Vs4CaloIter];
+	}
+	
+	nVs4Calo_++;
       }
-
-      nVs4Calo_++;
+      
+      for(Int_t Vs5CaloIter = 0; Vs5CaloIter < AlgJtCollection[2].nref; Vs5CaloIter++){
+	if(AlgJtCollection[2].jtpt[Vs5CaloIter] < jtThreshPtCut) break;
+	else if(TMath::Abs(AlgJtCollection[2].jteta[Vs5CaloIter]) > jtEtaCut) continue;
+	
+	Vs5CaloPt_[nVs5Calo_] = AlgJtCollection[2].jtpt[Vs5CaloIter];
+	Vs5CaloPhi_[nVs5Calo_] = AlgJtCollection[2].jtphi[Vs5CaloIter];
+	Vs5CaloEta_[nVs5Calo_] = AlgJtCollection[2].jteta[Vs5CaloIter];
+	
+	Vs5CaloTrkMax_[nVs5Calo_] = AlgJtCollection[2].trackMax[Vs5CaloIter];
+	Vs5CaloRawPt_[nVs5Calo_] = AlgJtCollection[2].rawpt[Vs5CaloIter];
+	
+	if(montecarlo){
+	  Vs5CaloRefPt_[nVs5Calo_] = AlgJtCollection[2].refpt[Vs5CaloIter];
+	  Vs5CaloRefPhi_[nVs5Calo_] = AlgJtCollection[2].refphi[Vs5CaloIter];
+	  Vs5CaloRefEta_[nVs5Calo_] = AlgJtCollection[2].refeta[Vs5CaloIter];
+	  Vs5CaloRefPart_[nVs5Calo_] = AlgJtCollection[2].refparton_flavor[Vs5CaloIter];
+	}
+	
+	nVs5Calo_++;
+      }
     }
 
     if(montecarlo){
@@ -337,16 +368,30 @@ int makeWJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *o
 	nT3_++;
       }
 
-      for(Int_t T4Iter = 0; T4Iter < AlgJtCollection[1].ngen; T4Iter++){
-	if(AlgJtCollection[1].genpt[T4Iter] < jtThreshPtCut) break;
-	else if(TMath::Abs(AlgJtCollection[1].geneta[T4Iter]) > jtEtaCut) continue;
+      if(!isMinBias){
+	for(Int_t T4Iter = 0; T4Iter < AlgJtCollection[1].ngen; T4Iter++){
+	  if(AlgJtCollection[1].genpt[T4Iter] < jtThreshPtCut) break;
+	  else if(TMath::Abs(AlgJtCollection[1].geneta[T4Iter]) > jtEtaCut) continue;
+	  
+	  T4Pt_[nT4_] = AlgJtCollection[1].genpt[T4Iter];
+	  T4Phi_[nT4_] = AlgJtCollection[1].genphi[T4Iter];
+	  T4Eta_[nT4_] = AlgJtCollection[1].geneta[T4Iter];
+	  T4Part_[nT4_] = AlgJtCollection[1].refparton_flavor[AlgJtCollection[1].genmatchindex[T4Iter]];
+	  
+	  nT4_++;
+	}
 	
-	T4Pt_[nT4_] = AlgJtCollection[1].genpt[T4Iter];
-	T4Phi_[nT4_] = AlgJtCollection[1].genphi[T4Iter];
-	T4Eta_[nT4_] = AlgJtCollection[1].geneta[T4Iter];
-	T4Part_[nT4_] = AlgJtCollection[1].refparton_flavor[AlgJtCollection[1].genmatchindex[T4Iter]];
-	
-	nT4_++;
+	for(Int_t T5Iter = 0; T5Iter < AlgJtCollection[2].ngen; T5Iter++){
+	  if(AlgJtCollection[2].genpt[T5Iter] < jtThreshPtCut) break;
+	  else if(TMath::Abs(AlgJtCollection[2].geneta[T5Iter]) > jtEtaCut) continue;
+	  
+	  T5Pt_[nT5_] = AlgJtCollection[2].genpt[T5Iter];
+	  T5Phi_[nT5_] = AlgJtCollection[2].genphi[T5Iter];
+	  T5Eta_[nT5_] = AlgJtCollection[2].geneta[T5Iter];
+	  T5Part_[nT5_] = AlgJtCollection[2].refparton_flavor[AlgJtCollection[2].genmatchindex[T5Iter]];
+	  
+	  nT5_++;
+	}
       }
     }
    
@@ -392,7 +437,7 @@ int makeWJetIniSkim(string fList = "", sampleType sType = kHIDATA, const char *o
       //      if(pf.pfPt[pfIter] < 0.5) continue;
 
       pfPt_[nPF_] = pf.pfPt[pfIter];
-      pfVsPt_[nPF_] = pf.pfVsPt[pfIter];
+      if(hi) pfVsPt_[nPF_] = pf.pfVsPt[pfIter];
       pfPhi_[nPF_] = pf.pfPhi[pfIter];
       pfEta_[nPF_] = pf.pfEta[pfIter];
       pfId_[nPF_] = pf.pfId[pfIter];
@@ -503,17 +548,17 @@ collisionType getCType(sampleType sType)
 
 int main(int argc, char *argv[])
 {
-  if(argc != 5)
+  if(argc != 6)
     {
-      std::cout << "Usage: makeWJetIniSkim <inputFile> <sType> <outputFile> <#>"  << std::endl;
+      std::cout << "Usage: makeWJetIniSkim <inputFile> <sType> <isMinBias> <outputFile> <#>"  << std::endl;
       std::cout << argc << std::endl;
-      std::cout << argv[0] << ", "  << argv[1] << ", " << argv[2] << ", " << argv[3]<< ", " << argv[4] << std::endl;
+      std::cout << argv[0] << ", "  << argv[1] << ", " << argv[2] << ", " << argv[3]<< ", " << argv[4] << ", " << argv[5] << std::endl;
       return 1;
     }
 
   int rStatus = -1;
 
-  rStatus = makeWJetIniSkim(argv[1], sampleType(atoi(argv[2])), argv[3], atoi(argv[4]));
+  rStatus = makeWJetIniSkim(argv[1], sampleType(atoi(argv[2])), (Bool_t)(atoi(argv[3])), argv[4], atoi(argv[5]));
 
   return rStatus;
 }

@@ -28,8 +28,14 @@ Bool_t isMonteCarlo(sampleType sType = kHIDATA){
 }
 
 
-Bool_t isHI(sampleType sType = kHIDATA){
+Bool_t isHI(sampleType sType){
   if(sType == kHIDATA || sType == kHIMC) return true;
+  else return false;
+}
+
+
+Bool_t isPP(sampleType sType){
+  if(sType == kPPDATA || sType == kPPMC) return true;
   else return false;
 }
 
@@ -107,6 +113,17 @@ Float_t Vs4CaloRefPhi_[maxJets];
 Float_t Vs4CaloRefEta_[maxJets];
 Int_t Vs4CaloRefPart_[maxJets];
 
+Int_t nVs5Calo_;
+Float_t Vs5CaloPt_[maxJets];
+Float_t Vs5CaloPhi_[maxJets];
+Float_t Vs5CaloEta_[maxJets];
+Float_t Vs5CaloTrkMax_[maxJets];
+Float_t Vs5CaloRawPt_[maxJets];
+Float_t Vs5CaloRefPt_[maxJets];
+Float_t Vs5CaloRefPhi_[maxJets];
+Float_t Vs5CaloRefEta_[maxJets];
+Int_t Vs5CaloRefPart_[maxJets];
+
 Int_t nT3_;
 Float_t T3Pt_[maxJets];
 Float_t T3Phi_[maxJets];
@@ -119,6 +136,12 @@ Float_t T4Phi_[maxJets];
 Float_t T4Eta_[maxJets];
 Int_t T4Part_[maxJets];
 
+Int_t nT5_;
+Float_t T5Pt_[maxJets];
+Float_t T5Phi_[maxJets];
+Float_t T5Eta_[maxJets];
+Int_t T5Part_[maxJets];
+
 //Gen Tree Variables
 
 Int_t nGen_;
@@ -128,7 +151,7 @@ Float_t genEta_[maxEntrySim];
 Int_t genId_[maxEntrySim];
 Int_t genMotherId_[maxEntrySim];
 
-void SetIniBranches(sampleType sType = kHIDATA)
+void SetIniBranches(sampleType sType = kHIDATA, Bool_t isMinBias = false)
 {
   Bool_t montecarlo = isMonteCarlo(sType);
   Bool_t hi = isHI(sType);
@@ -147,7 +170,7 @@ void SetIniBranches(sampleType sType = kHIDATA)
   
   pfCandTreeIni_p->Branch("nPF", &nPF_, "nPF/I");
   pfCandTreeIni_p->Branch("pfPt", &pfPt_, "pfPt[nPF]/F");
-  pfCandTreeIni_p->Branch("pfVsPt", &pfVsPt_, "pfVsPt[nPF]/F");
+  if(hi) pfCandTreeIni_p->Branch("pfVsPt", &pfVsPt_, "pfVsPt[nPF]/F");
   pfCandTreeIni_p->Branch("pfPhi", &pfPhi_, "pfPhi[nPF]/F");
   pfCandTreeIni_p->Branch("pfEta", &pfEta_, "pfEta[nPF]/F");
   pfCandTreeIni_p->Branch("pfId", &pfId_, "pfId[nPF]/I");
@@ -166,7 +189,7 @@ void SetIniBranches(sampleType sType = kHIDATA)
     jetTreeIni_p->Branch("hiEvtPlaneIni", &hiEvtPlaneIni_, "hiEvtPlaneIni/F");
     jetTreeIni_p->Branch("psinIni", &psinIni_, "psinIni/F");
   }    
-
+ 
   jetTreeIni_p->Branch("nVs3Calo", &nVs3Calo_, "nVs3Calo/I");
   jetTreeIni_p->Branch("Vs3CaloPt", Vs3CaloPt_, "Vs3CaloPt[nVs3Calo]/F");
   jetTreeIni_p->Branch("Vs3CaloPhi", Vs3CaloPhi_, "Vs3CaloPhi[nVs3Calo]/F");
@@ -174,13 +197,21 @@ void SetIniBranches(sampleType sType = kHIDATA)
   jetTreeIni_p->Branch("Vs3CaloTrkMax", Vs3CaloTrkMax_, "Vs3CaloTrkMax[nVs3Calo]/F");
   jetTreeIni_p->Branch("Vs3CaloRawPt", Vs3CaloRawPt_, "Vs3CaloRawPt[nVs3Calo]/F");
 
-  jetTreeIni_p->Branch("nVs4Calo", &nVs4Calo_, "nVs4Calo/I");
-  jetTreeIni_p->Branch("Vs4CaloPt", Vs4CaloPt_, "Vs4CaloPt[nVs4Calo]/F");
-  jetTreeIni_p->Branch("Vs4CaloPhi", Vs4CaloPhi_, "Vs4CaloPhi[nVs4Calo]/F");
-  jetTreeIni_p->Branch("Vs4CaloEta", Vs4CaloEta_, "Vs4CaloEta[nVs4Calo]/F");
-  jetTreeIni_p->Branch("Vs4CaloTrkMax", Vs4CaloTrkMax_, "Vs4CaloTrkMax[nVs4Calo]/F");
-  jetTreeIni_p->Branch("Vs4CaloRawPt", Vs4CaloRawPt_, "Vs4CaloRawPt[nVs4Calo]/F");
-
+  if(!isMinBias){
+    jetTreeIni_p->Branch("nVs4Calo", &nVs4Calo_, "nVs4Calo/I");
+    jetTreeIni_p->Branch("Vs4CaloPt", Vs4CaloPt_, "Vs4CaloPt[nVs4Calo]/F");
+    jetTreeIni_p->Branch("Vs4CaloPhi", Vs4CaloPhi_, "Vs4CaloPhi[nVs4Calo]/F");
+    jetTreeIni_p->Branch("Vs4CaloEta", Vs4CaloEta_, "Vs4CaloEta[nVs4Calo]/F");
+    jetTreeIni_p->Branch("Vs4CaloTrkMax", Vs4CaloTrkMax_, "Vs4CaloTrkMax[nVs4Calo]/F");
+    jetTreeIni_p->Branch("Vs4CaloRawPt", Vs4CaloRawPt_, "Vs4CaloRawPt[nVs4Calo]/F");
+    
+    jetTreeIni_p->Branch("nVs5Calo", &nVs5Calo_, "nVs5Calo/I");
+    jetTreeIni_p->Branch("Vs5CaloPt", Vs5CaloPt_, "Vs5CaloPt[nVs5Calo]/F");
+    jetTreeIni_p->Branch("Vs5CaloPhi", Vs5CaloPhi_, "Vs5CaloPhi[nVs5Calo]/F");
+    jetTreeIni_p->Branch("Vs5CaloEta", Vs5CaloEta_, "Vs5CaloEta[nVs5Calo]/F");
+    jetTreeIni_p->Branch("Vs5CaloTrkMax", Vs5CaloTrkMax_, "Vs5CaloTrkMax[nVs5Calo]/F");
+    jetTreeIni_p->Branch("Vs5CaloRawPt", Vs5CaloRawPt_, "Vs5CaloRawPt[nVs5Calo]/F");
+  }
 
   if(montecarlo){
     jetTreeIni_p->Branch("Vs3CaloRefPt", Vs3CaloRefPt_, "Vs3CaloRefPt[nVs3Calo]/F");
@@ -188,10 +219,17 @@ void SetIniBranches(sampleType sType = kHIDATA)
     jetTreeIni_p->Branch("Vs3CaloRefEta", Vs3CaloRefEta_, "Vs3CaloRefEta[nVs3Calo]/F");
     jetTreeIni_p->Branch("Vs3CaloRefPart", Vs3CaloRefPart_, "Vs3CaloRefPart[nVs3Calo]/I");
 
-    jetTreeIni_p->Branch("Vs4CaloRefPt", Vs4CaloRefPt_, "Vs4CaloRefPt[nVs4Calo]/F");
-    jetTreeIni_p->Branch("Vs4CaloRefPhi", Vs4CaloRefPhi_, "Vs4CaloRefPhi[nVs4Calo]/F");
-    jetTreeIni_p->Branch("Vs4CaloRefEta", Vs4CaloRefEta_, "Vs4CaloRefEta[nVs4Calo]/F");
-    jetTreeIni_p->Branch("Vs4CaloRefPart", Vs4CaloRefPart_, "Vs4CaloRefPart[nVs4Calo]/I");
+    if(!isMinBias){
+      jetTreeIni_p->Branch("Vs4CaloRefPt", Vs4CaloRefPt_, "Vs4CaloRefPt[nVs4Calo]/F");
+      jetTreeIni_p->Branch("Vs4CaloRefPhi", Vs4CaloRefPhi_, "Vs4CaloRefPhi[nVs4Calo]/F");
+      jetTreeIni_p->Branch("Vs4CaloRefEta", Vs4CaloRefEta_, "Vs4CaloRefEta[nVs4Calo]/F");
+      jetTreeIni_p->Branch("Vs4CaloRefPart", Vs4CaloRefPart_, "Vs4CaloRefPart[nVs4Calo]/I");
+      
+      jetTreeIni_p->Branch("Vs5CaloRefPt", Vs5CaloRefPt_, "Vs5CaloRefPt[nVs5Calo]/F");
+      jetTreeIni_p->Branch("Vs5CaloRefPhi", Vs5CaloRefPhi_, "Vs5CaloRefPhi[nVs5Calo]/F");
+      jetTreeIni_p->Branch("Vs5CaloRefEta", Vs5CaloRefEta_, "Vs5CaloRefEta[nVs5Calo]/F");
+      jetTreeIni_p->Branch("Vs5CaloRefPart", Vs5CaloRefPart_, "Vs5CaloRefPart[nVs5Calo]/I");
+    }      
 
     jetTreeIni_p->Branch("nT3", &nT3_, "nT3/I");
     jetTreeIni_p->Branch("T3Pt", T3Pt_, "T3Pt[nT3]/F");
@@ -199,11 +237,19 @@ void SetIniBranches(sampleType sType = kHIDATA)
     jetTreeIni_p->Branch("T3Eta", T3Eta_, "T3Eta[nT3]/F");
     jetTreeIni_p->Branch("T3Part", T3Part_, "T3Part[nT3]/I");
 
-    jetTreeIni_p->Branch("nT4", &nT4_, "nT4/I");
-    jetTreeIni_p->Branch("T4Pt", T4Pt_, "T4Pt[nT4]/F");
-    jetTreeIni_p->Branch("T4Phi", T4Phi_, "T4Phi[nT4]/F");
-    jetTreeIni_p->Branch("T4Eta", T4Eta_, "T4Eta[nT4]/F");
-    jetTreeIni_p->Branch("T4Part", T4Part_, "T4Part[nT4]/I");
+    if(!isMinBias){
+      jetTreeIni_p->Branch("nT4", &nT4_, "nT4/I");
+      jetTreeIni_p->Branch("T4Pt", T4Pt_, "T4Pt[nT4]/F");
+      jetTreeIni_p->Branch("T4Phi", T4Phi_, "T4Phi[nT4]/F");
+      jetTreeIni_p->Branch("T4Eta", T4Eta_, "T4Eta[nT4]/F");
+      jetTreeIni_p->Branch("T4Part", T4Part_, "T4Part[nT4]/I");
+      
+      jetTreeIni_p->Branch("nT5", &nT5_, "nT5/I");
+      jetTreeIni_p->Branch("T5Pt", T5Pt_, "T5Pt[nT5]/F");
+      jetTreeIni_p->Branch("T5Phi", T5Phi_, "T5Phi[nT5]/F");
+      jetTreeIni_p->Branch("T5Eta", T5Eta_, "T5Eta[nT5]/F");
+      jetTreeIni_p->Branch("T5Part", T5Part_, "T5Part[nT5]/I");
+    }
   }
 
   //Gen Tree Branches
@@ -222,7 +268,7 @@ void SetIniBranches(sampleType sType = kHIDATA)
 }
 
 
-void GetIniBranches(sampleType sType = kHIDATA)
+void GetIniBranches(sampleType sType = kHIDATA, Bool_t isMinBias = false)
 {
   Bool_t montecarlo = isMonteCarlo(sType);
   Bool_t hi = isHI(sType);
@@ -238,7 +284,7 @@ void GetIniBranches(sampleType sType = kHIDATA)
   
   pfCandTreeIni_p->SetBranchAddress("nPF", &nPF_);
   pfCandTreeIni_p->SetBranchAddress("pfPt", pfPt_);
-  pfCandTreeIni_p->SetBranchAddress("pfVsPt", pfVsPt_);
+  if(hi) pfCandTreeIni_p->SetBranchAddress("pfVsPt", pfVsPt_);
   pfCandTreeIni_p->SetBranchAddress("pfPhi", pfPhi_);
   pfCandTreeIni_p->SetBranchAddress("pfEta", pfEta_);    
   pfCandTreeIni_p->SetBranchAddress("pfId", pfId_);
@@ -265,11 +311,19 @@ void GetIniBranches(sampleType sType = kHIDATA)
   jetTreeIni_p->SetBranchAddress("Vs3CaloEta", Vs3CaloEta_);
   jetTreeIni_p->SetBranchAddress("Vs3CaloTrkMax", Vs3CaloTrkMax_);
 
-  jetTreeIni_p->SetBranchAddress("nVs4Calo", &nVs4Calo_);
-  jetTreeIni_p->SetBranchAddress("Vs4CaloPt", Vs4CaloPt_);
-  jetTreeIni_p->SetBranchAddress("Vs4CaloPhi", Vs4CaloPhi_);
-  jetTreeIni_p->SetBranchAddress("Vs4CaloEta", Vs4CaloEta_);
-  jetTreeIni_p->SetBranchAddress("Vs4CaloTrkMax", Vs4CaloTrkMax_);
+  if(!isMinBias){
+    jetTreeIni_p->SetBranchAddress("nVs4Calo", &nVs4Calo_);
+    jetTreeIni_p->SetBranchAddress("Vs4CaloPt", Vs4CaloPt_);
+    jetTreeIni_p->SetBranchAddress("Vs4CaloPhi", Vs4CaloPhi_);
+    jetTreeIni_p->SetBranchAddress("Vs4CaloEta", Vs4CaloEta_);
+    jetTreeIni_p->SetBranchAddress("Vs4CaloTrkMax", Vs4CaloTrkMax_);
+    
+    jetTreeIni_p->SetBranchAddress("nVs5Calo", &nVs5Calo_);
+    jetTreeIni_p->SetBranchAddress("Vs5CaloPt", Vs5CaloPt_);
+    jetTreeIni_p->SetBranchAddress("Vs5CaloPhi", Vs5CaloPhi_);
+    jetTreeIni_p->SetBranchAddress("Vs5CaloEta", Vs5CaloEta_);
+    jetTreeIni_p->SetBranchAddress("Vs5CaloTrkMax", Vs5CaloTrkMax_);
+  }
 
   if(montecarlo){
     jetTreeIni_p->SetBranchAddress("Vs3CaloRefPt", Vs3CaloRefPt_);
@@ -277,10 +331,17 @@ void GetIniBranches(sampleType sType = kHIDATA)
     jetTreeIni_p->SetBranchAddress("Vs3CaloRefEta", Vs3CaloRefEta_);
     jetTreeIni_p->SetBranchAddress("Vs3CaloRefPart", Vs3CaloRefPart_);
 
-    jetTreeIni_p->SetBranchAddress("Vs4CaloRefPt", Vs4CaloRefPt_);
-    jetTreeIni_p->SetBranchAddress("Vs4CaloRefPhi", Vs4CaloRefPhi_);
-    jetTreeIni_p->SetBranchAddress("Vs4CaloRefEta", Vs4CaloRefEta_);
-    jetTreeIni_p->SetBranchAddress("Vs4CaloRefPart", Vs4CaloRefPart_);
+    if(!isMinBias){
+      jetTreeIni_p->SetBranchAddress("Vs4CaloRefPt", Vs4CaloRefPt_);
+      jetTreeIni_p->SetBranchAddress("Vs4CaloRefPhi", Vs4CaloRefPhi_);
+      jetTreeIni_p->SetBranchAddress("Vs4CaloRefEta", Vs4CaloRefEta_);
+      jetTreeIni_p->SetBranchAddress("Vs4CaloRefPart", Vs4CaloRefPart_);
+      
+      jetTreeIni_p->SetBranchAddress("Vs5CaloRefPt", Vs5CaloRefPt_);
+      jetTreeIni_p->SetBranchAddress("Vs5CaloRefPhi", Vs5CaloRefPhi_);
+      jetTreeIni_p->SetBranchAddress("Vs5CaloRefEta", Vs5CaloRefEta_);
+      jetTreeIni_p->SetBranchAddress("Vs5CaloRefPart", Vs5CaloRefPart_);
+    }      
 
     jetTreeIni_p->SetBranchAddress("nT3", &nT3_);
     jetTreeIni_p->SetBranchAddress("T3Pt", T3Pt_);
@@ -288,11 +349,19 @@ void GetIniBranches(sampleType sType = kHIDATA)
     jetTreeIni_p->SetBranchAddress("T3Eta", T3Eta_);
     jetTreeIni_p->SetBranchAddress("T3Part", T3Part_);
 
-    jetTreeIni_p->SetBranchAddress("nT4", &nT4_);
-    jetTreeIni_p->SetBranchAddress("T4Pt", T4Pt_);
-    jetTreeIni_p->SetBranchAddress("T4Phi", T4Phi_);
-    jetTreeIni_p->SetBranchAddress("T4Eta", T4Eta_);
-    jetTreeIni_p->SetBranchAddress("T4Part", T4Part_);
+    if(!isMinBias){
+      jetTreeIni_p->SetBranchAddress("nT4", &nT4_);
+      jetTreeIni_p->SetBranchAddress("T4Pt", T4Pt_);
+      jetTreeIni_p->SetBranchAddress("T4Phi", T4Phi_);
+      jetTreeIni_p->SetBranchAddress("T4Eta", T4Eta_);
+      jetTreeIni_p->SetBranchAddress("T4Part", T4Part_);
+      
+      jetTreeIni_p->SetBranchAddress("nT5", &nT5_);
+      jetTreeIni_p->SetBranchAddress("T5Pt", T5Pt_);
+      jetTreeIni_p->SetBranchAddress("T5Phi", T5Phi_);
+      jetTreeIni_p->SetBranchAddress("T5Eta", T5Eta_);
+      jetTreeIni_p->SetBranchAddress("T5Part", T5Part_);
+    }
   }
 
   //Gen Tree Branches
@@ -310,7 +379,7 @@ void GetIniBranches(sampleType sType = kHIDATA)
 }
 
 
-void InitWJetIniSkim(sampleType sType = kHIDATA)
+void InitWJetIniSkim(sampleType sType = kHIDATA, Bool_t isMinBias = false)
 {
   std::cout << "Init WJet IniSkim" << std::endl;
 
@@ -319,7 +388,7 @@ void InitWJetIniSkim(sampleType sType = kHIDATA)
   jetTreeIni_p = new TTree("jetTreeIni", "jetTreeIni");
   if(isMonteCarlo(sType)) genTreeIni_p = new TTree("genTreeIni", "genTreeIni");
 
-  SetIniBranches(sType);
+  SetIniBranches(sType, isMinBias);
 
   return;
 }
@@ -336,7 +405,7 @@ void CleanupWJetIniSkim()
 }
 
 
-void GetWJetIniSkim(TFile* iniFile_p, sampleType sType = kHIDATA)
+void GetWJetIniSkim(TFile* iniFile_p, sampleType sType = kHIDATA, Bool_t isMinBias = false)
 {
   std::cout << "Get WJet IniSkim" << std::endl;
 
@@ -345,7 +414,7 @@ void GetWJetIniSkim(TFile* iniFile_p, sampleType sType = kHIDATA)
   jetTreeIni_p = (TTree*)iniFile_p->Get("jetTreeIni");
   if(isMonteCarlo(sType)) genTreeIni_p = (TTree*)iniFile_p->Get("genTreeIni");
 
-  GetIniBranches(sType);
+  GetIniBranches(sType, isMinBias);
 
   return;
 }

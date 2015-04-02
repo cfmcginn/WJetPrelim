@@ -1,12 +1,12 @@
 #!/bin/bash
-if [ $# -ne 5 ]
+if [ $# -ne 6 ]
 then 
-  echo "Usage: ./makeWJetIniSkim.sh <inputList> <sampleType> <outputFile> <outDir> <#>"
+  echo "Usage: ./makeWJetIniSkim.sh <inputList> <sampleType> <isMinBias> <outputFile> <outDir> <#>"
   exit 1
 fi
 
-echo | awk -v inputList=$1 -v sampleType=$2 -v outputFile=$3 -v num=$5 '{print "./makeWJetIniSkim.exe \""inputList"\" \""sampleType"\" \""outputFile"\" \""num"\""}' | bash
-mv $3_$5*.root $4
+echo | awk -v inputList=$1 -v sampleType=$2 -v isMinBias=$3 -v outputFile=$4 -v num=$6 '{print "./makeWJetIniSkim.exe \""inputList"\" \""sampleType"\" \""isMinBias"\" \""outputFile"\" \""num"\""}' | bash
+mv $4_$6*.root $5
 rm *.root
 
 echo "job done successfully"

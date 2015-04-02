@@ -105,7 +105,7 @@ Float_t pthat_;
 Float_t hiEvtPlane_;
 Float_t psin_;
 
-const Int_t nJtAlg = 4;
+const Int_t nJtAlg = 6;
 const Int_t nJtMax = 4;
 
 Float_t AlgJtPt_[nJtAlg][nJtMax];
@@ -165,29 +165,32 @@ void SetAnaBranches(sampleType sType = kHIDATA)
   //PF Tree Branches
 
   pfCandTreeAna_p->Branch("muonPt", &muonPt_, "muonPt/F");
-  pfCandTreeAna_p->Branch("muonVsPt", &muonVsPt_, "muonVsPt/F");
+  if(hi) pfCandTreeAna_p->Branch("muonVsPt", &muonVsPt_, "muonVsPt/F");
   pfCandTreeAna_p->Branch("muonPhi", &muonPhi_, "muonPhi/F");
   pfCandTreeAna_p->Branch("muonEta", &muonEta_, "muonEta/F");
 
   pfCandTreeAna_p->Branch("electronPt", &electronPt_, "electronPt/F");
-  pfCandTreeAna_p->Branch("electronVsPt", &electronVsPt_, "electronVsPt/F");
+  if(hi) pfCandTreeAna_p->Branch("electronVsPt", &electronVsPt_, "electronVsPt/F");
   pfCandTreeAna_p->Branch("electronPhi", &electronPhi_, "electronPhi/F");
   pfCandTreeAna_p->Branch("electronEta", &electronEta_, "electronEta/F");
 
   pfCandTreeAna_p->Branch("leptPt", &leptPt_, "leptPt/F");
-  pfCandTreeAna_p->Branch("leptVsPt", &leptVsPt_, "leptVsPt/F");
+  if(hi) pfCandTreeAna_p->Branch("leptVsPt", &leptVsPt_, "leptVsPt/F");
   pfCandTreeAna_p->Branch("leptPhi", &leptPhi_, "leptPhi/F");
   pfCandTreeAna_p->Branch("leptEta", &leptEta_, "leptEta/F");
 
   pfCandTreeAna_p->Branch("check1Pt", &check1Pt_, "check1Pt/F");
-  pfCandTreeAna_p->Branch("check1VsPt", &check1VsPt_, "check1VsPt/F");
+  if(hi) pfCandTreeAna_p->Branch("check1VsPt", &check1VsPt_, "check1VsPt/F");
   pfCandTreeAna_p->Branch("check1Phi", &check1Phi_, "check1Phi/F");
   pfCandTreeAna_p->Branch("check1Eta", &check1Eta_, "check1Eta/F");
 
   pfCandTreeAna_p->Branch("check2Pt", &check2Pt_, "check2Pt/F");
-  pfCandTreeAna_p->Branch("check2VsPt", &check2VsPt_, "check2VsPt/F");
+  if(hi) pfCandTreeAna_p->Branch("check2VsPt", &check2VsPt_, "check2VsPt/F");
   pfCandTreeAna_p->Branch("check2Phi", &check2Phi_, "check2Phi/F");
   pfCandTreeAna_p->Branch("check2Eta", &check2Eta_, "check2Eta/F");
+
+  pfCandTreeAna_p->Branch("nPF", &nPF_, "nPF/I");
+  pfCandTreeAna_p->Branch("pfPhi", pfPhi_, "pfPhi[nPF]/F");
 
   pfCandTreeAna_p->Branch("pfEvtPtSum", pfEvtPtSum_, "pfEvtPtSum[2]/F");
   pfCandTreeAna_p->Branch("pfEvtPtMag", &pfEvtPtMag_, "pfEvtPtMag/F");
@@ -201,18 +204,19 @@ void SetAnaBranches(sampleType sType = kHIDATA)
   pfCandTreeAna_p->Branch("pfWPtMag", &pfWPtMag_, "pfWPtMag/F");
   pfCandTreeAna_p->Branch("pfWPhi", &pfWPhi_, "pfWPhi/F");
 
-  pfCandTreeAna_p->Branch("pfEvtVsPtSum", pfEvtVsPtSum_, "pfEvtVsPtSum[2]/F");
-  pfCandTreeAna_p->Branch("pfEvtVsPtMag", &pfEvtVsPtMag_, "pfEvtVsPtMag/F");
-  pfCandTreeAna_p->Branch("pfEvtVsPhi", &pfEvtVsPhi_, "pfEvtVsPhi/F");
+  if(hi){
+    pfCandTreeAna_p->Branch("pfEvtVsPtSum", pfEvtVsPtSum_, "pfEvtVsPtSum[2]/F");
+    pfCandTreeAna_p->Branch("pfEvtVsPtMag", &pfEvtVsPtMag_, "pfEvtVsPtMag/F");
+    pfCandTreeAna_p->Branch("pfEvtVsPhi", &pfEvtVsPhi_, "pfEvtVsPhi/F");
 
-  pfCandTreeAna_p->Branch("pfVsNeuPhi", &pfVsNeuPhi_, "pfVsNeuPhi/F");
-  pfCandTreeAna_p->Branch("pfVsMt", &pfVsMt_, "pfVsMt/F");
-  pfCandTreeAna_p->Branch("pfVsCheck1Mt", &pfVsCheck1Mt_, "pfVsCheck1Mt/F");
-  pfCandTreeAna_p->Branch("pfVsCheck2Mt", &pfVsCheck2Mt_, "pfVsCheck2Mt/F");
-  pfCandTreeAna_p->Branch("pfVsWPtSum", &pfVsWPtSum_, "pfVsWPtSum[2]/F");
-  pfCandTreeAna_p->Branch("pfVsWPtMag", &pfVsWPtMag_, "pfVsWPtMag/F");
-  pfCandTreeAna_p->Branch("pfVsWPhi", &pfVsWPhi_, "pfVsWPhi/F");
-
+    pfCandTreeAna_p->Branch("pfVsNeuPhi", &pfVsNeuPhi_, "pfVsNeuPhi/F");
+    pfCandTreeAna_p->Branch("pfVsMt", &pfVsMt_, "pfVsMt/F");
+    pfCandTreeAna_p->Branch("pfVsCheck1Mt", &pfVsCheck1Mt_, "pfVsCheck1Mt/F");
+    pfCandTreeAna_p->Branch("pfVsCheck2Mt", &pfVsCheck2Mt_, "pfVsCheck2Mt/F");
+    pfCandTreeAna_p->Branch("pfVsWPtSum", &pfVsWPtSum_, "pfVsWPtSum[2]/F");
+    pfCandTreeAna_p->Branch("pfVsWPtMag", &pfVsWPtMag_, "pfVsWPtMag/F");
+    pfCandTreeAna_p->Branch("pfVsWPhi", &pfVsWPhi_, "pfVsWPhi/F");
+  }
 
   //Jet Tree Branches
 
@@ -291,27 +295,27 @@ void GetAnaBranches(sampleType sType = kHIDATA)
   //PF Tree Branches
 
   pfCandTreeAna_p->SetBranchAddress("muonPt", &muonPt_);
-  pfCandTreeAna_p->SetBranchAddress("muonVsPt", &muonVsPt_);
+  if(hi) pfCandTreeAna_p->SetBranchAddress("muonVsPt", &muonVsPt_);
   pfCandTreeAna_p->SetBranchAddress("muonPhi", &muonPhi_);
   pfCandTreeAna_p->SetBranchAddress("muonEta", &muonEta_);
 
   pfCandTreeAna_p->SetBranchAddress("electronPt", &electronPt_);
-  pfCandTreeAna_p->SetBranchAddress("electronVsPt", &electronVsPt_);
+  if(hi) pfCandTreeAna_p->SetBranchAddress("electronVsPt", &electronVsPt_);
   pfCandTreeAna_p->SetBranchAddress("electronPhi", &electronPhi_);
   pfCandTreeAna_p->SetBranchAddress("electronEta", &electronEta_);
 
   pfCandTreeAna_p->SetBranchAddress("leptPt", &leptPt_);
-  pfCandTreeAna_p->SetBranchAddress("leptVsPt", &leptVsPt_);
+  if(hi) pfCandTreeAna_p->SetBranchAddress("leptVsPt", &leptVsPt_);
   pfCandTreeAna_p->SetBranchAddress("leptPhi", &leptPhi_);
   pfCandTreeAna_p->SetBranchAddress("leptEta", &leptEta_);
 
   pfCandTreeAna_p->SetBranchAddress("check1Pt", &check1Pt_);
-  pfCandTreeAna_p->SetBranchAddress("check1VsPt", &check1VsPt_);
+  if(hi) pfCandTreeAna_p->SetBranchAddress("check1VsPt", &check1VsPt_);
   pfCandTreeAna_p->SetBranchAddress("check1Phi", &check1Phi_);
   pfCandTreeAna_p->SetBranchAddress("check1Eta", &check1Eta_);
 
   pfCandTreeAna_p->SetBranchAddress("check2Pt", &check2Pt_);
-  pfCandTreeAna_p->SetBranchAddress("check2VsPt", &check2VsPt_);
+  if(hi) pfCandTreeAna_p->SetBranchAddress("check2VsPt", &check2VsPt_);
   pfCandTreeAna_p->SetBranchAddress("check2Phi", &check2Phi_);
   pfCandTreeAna_p->SetBranchAddress("check2Eta", &check2Eta_);
 
@@ -327,17 +331,19 @@ void GetAnaBranches(sampleType sType = kHIDATA)
   pfCandTreeAna_p->SetBranchAddress("pfWPtMag", &pfWPtMag_);  
   pfCandTreeAna_p->SetBranchAddress("pfWPhi", &pfWPhi_);  
 
-  pfCandTreeAna_p->SetBranchAddress("pfEvtVsPtSum", pfEvtVsPtSum_);
-  pfCandTreeAna_p->SetBranchAddress("pfEvtVsPtMag", &pfEvtVsPtMag_);
-  pfCandTreeAna_p->SetBranchAddress("pfEvtVsPhi", &pfEvtVsPhi_);  
-
-  pfCandTreeAna_p->SetBranchAddress("pfVsNeuPhi", &pfVsNeuPhi_);  
-  pfCandTreeAna_p->SetBranchAddress("pfVsMt", &pfVsMt_);  
-  pfCandTreeAna_p->SetBranchAddress("pfVsCheck1Mt", &pfVsCheck1Mt_);  
-  pfCandTreeAna_p->SetBranchAddress("pfVsCheck2Mt", &pfVsCheck2Mt_);  
-  pfCandTreeAna_p->SetBranchAddress("pfVsWPtSum", pfVsWPtSum_);  
-  pfCandTreeAna_p->SetBranchAddress("pfVsWPtMag", &pfVsWPtMag_);  
-  pfCandTreeAna_p->SetBranchAddress("pfVsWPhi", &pfVsWPhi_);  
+  if(hi){
+    pfCandTreeAna_p->SetBranchAddress("pfEvtVsPtSum", pfEvtVsPtSum_);
+    pfCandTreeAna_p->SetBranchAddress("pfEvtVsPtMag", &pfEvtVsPtMag_);
+    pfCandTreeAna_p->SetBranchAddress("pfEvtVsPhi", &pfEvtVsPhi_);  
+    
+    pfCandTreeAna_p->SetBranchAddress("pfVsNeuPhi", &pfVsNeuPhi_);  
+    pfCandTreeAna_p->SetBranchAddress("pfVsMt", &pfVsMt_);  
+    pfCandTreeAna_p->SetBranchAddress("pfVsCheck1Mt", &pfVsCheck1Mt_);  
+    pfCandTreeAna_p->SetBranchAddress("pfVsCheck2Mt", &pfVsCheck2Mt_);  
+    pfCandTreeAna_p->SetBranchAddress("pfVsWPtSum", pfVsWPtSum_);  
+    pfCandTreeAna_p->SetBranchAddress("pfVsWPtMag", &pfVsWPtMag_);  
+    pfCandTreeAna_p->SetBranchAddress("pfVsWPhi", &pfVsWPhi_);  
+  }
 
   //Jet Tree Branches
   
